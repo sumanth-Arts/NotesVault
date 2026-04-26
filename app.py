@@ -16,6 +16,9 @@ ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 app.secret_key = os.getenv("SECRET_KEY")
 
+print("ADMIN_USERNAME =", ADMIN_USERNAME)
+print("ADMIN_PASSWORD =", ADMIN_PASSWORD)
+print("SECRET_KEY =", app.secret_key)
 semesters = [f"Semester {i}" for i in range(1, 9)]
 
 
