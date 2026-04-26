@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ unit_name }} Notes</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+
+<body class="bg-slate-950 text-white min-h-screen p-6 md:p-10">
+
+<div class="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+    <div class="mb-10">
+        <h1 class="text-4xl font-extrabold text-white mb-2">
+            {{ unit_name }}
+        </h1>
+        <p class="text-slate-400">
+            Detailed breakdown of topics and core concepts.
+        </p>
+    </div>
+
+ 
+    <div class="space-y-6">
+
+        {% for topic in content %}
+        <div class="group bg-slate-800/30 border border-slate-700/50 rounded-3xl overflow-hidden transition-all duration-300 hover:border-sky-500/50">
+
+            <div
+                class="p-6 cursor-pointer flex justify-between items-start gap-4"
+                onclick="toggleTopic(this)"
+            >
+                <div>
+                    <h3 class="text-xl font-bold text-sky-400 mb-2 group-hover:text-sky-300 transition-colors">
+                        {{ topic.title }}
+                    </h3>
+
+                    <p class="text-slate-300 text-sm leading-relaxed whitespace-pre-line">
+                        {{ topic.summary }}
+                    </p>
+                </div>
+
+                <div class="mt-1 p-2 rounded-lg bg-slate-700/50 group-hover:bg-sky-500/20 transition-colors">
+                    <svg
+                        class="w-5 h-5 text-slate-400 group-hover:text-sky-400 transform transition-transform duration-300 toggle-icon"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 9l-7 7-7-7"
+                        ></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="hidden-content hidden px-6 pb-6 border-t border-slate-700/50 bg-slate-900/20">
+
+                <div class="pt-6 space-y-6">
+
+                    {% if topic.definition and topic.title != "Types of Networks" %}
+                    <div class="p-5 rounded-2xl bg-indigo-500/5 border border-indigo-500/20">
+                        <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block mb-2">
+                            Textbook Definition
+                        </span>
+
+                        <p class="text-slate-300 italic text-sm whitespace-pre-line">
+                            "{{ topic.definition }}"
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    {% if topic.example and topic.example != "None" %}
+                    <div class="p-5 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
+                        <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest block mb-2">
+                            Practical Example
+                        </span>
+
+                        <p class="text-slate-300 text-sm whitespace-pre-line">
+                            {{ topic.example }}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    {% if topic.image %}
+                    <div class="relative overflow-hidden rounded-2xl border border-slate-700">
+                        <img
+                            src="{{ url_for('static', filename=topic.image) }}"
+                            alt="{{ topic.title }}"
+                            class="w-full h-auto object-cover rounded-2xl"
+                        >
+                    </div>
+                    {% endif %}
+
+                    <div class="grid grid-cols-1 gap-4 mt-4">
+
+                        {% for section_title, section_content, image_path in topic.sections %}
+                        <div class="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/30">
+
+                            <h4 class="text-white font-bold mb-2 flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                                {{ section_title }}
+                            </h4>
+
+                            <p class="text-slate-400 text-sm leading-relaxed mb-4 whitespace-pre-line">
+                                {{ section_content }}
+                            </p>
+
+                            {% if image_path %}
+                            <img
+                                src="{{ url_for('static', filename=image_path) }}"
+                                class="rounded-xl border border-slate-700 w-full md:w-2/3 h-auto"
+                            >
+                            {% endif %}
+
+                        </div>
+                        {% endfor %}
+
+                    </div>
+
+                    {% if topic.problems %}
+                    <div class="mt-8">
+                        <h3 class="text-lg font-bold text-sky-400 mb-4">
+                            Problem Bank
+                        </h3>
+
+                        {% for problem, solution in topic.problems %}
+                        <div class="bg-slate-800 p-4 rounded-xl mb-4 border border-slate-700">
+
+                            <h4 class="font-semibold text-white mb-2">
+                                Problem:
+                            </h4>
+
+                            <p class="text-slate-300 whitespace-pre-line mb-4">
+                                {{ problem }}
+                            </p>
+
+                            {% if solution %}
+                            <h4 class="font-semibold text-emerald-400 mb-2">
+                                Solution:
+                            </h4>
+
+                            <p class="text-slate-300 whitespace-pre-line">
+                                {{ solution }}
+                            </p>
+                            {% endif %}
+
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+        delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "\\(", right: "\\)", display: false }
+        ]
+    });
+});
+</script>
+
+</body>
+</html>

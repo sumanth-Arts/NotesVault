@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ semester_name }} | Soulful Arts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #0f172a; 
+            color: #f8fafc;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: #38bdf8;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <nav class="w-full border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2 text-slate-400 hover:text-white transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7"/></svg>
+                <span class="font-medium">Back to Home</span>
+            </a>
+            <h2 class="text-lg font-bold text-sky-400">Soulful Arts</h2>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-12">
+        <header class="mb-12">
+            <span class="text-sky-500 font-mono text-sm tracking-widest uppercase mb-2 block">Curriculum Overview</span>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white">{{ semester_name }}</h1>
+            <p class="text-slate-400 mt-4 max-w-2xl">
+                Select a subject below to view specific study materials including hand-written notes, 
+                presentation slides, and previous examination papers.
+            </p>
+        </header>
+
+        <h2 class="text-xl font-bold mb-6 flex items-center gap-2 text-slate-200">
+            <span class="w-8 h-px bg-sky-500"></span>
+            Select Subject
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for subject in subjects %}
+                <div class="glass-card p-8 rounded-[2rem] cursor-pointer group"
+                     onclick="window.location.href='/subject/{{ semester_name }}/{{ subject }}'">
+                    
+                    <div class="flex justify-between items-start mb-12">
+                        <div class="w-12 h-12 rounded-2xl bg-sky-500/10 flex items-center justify-center text-sky-400 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <span class="text-slate-600 font-bold text-sm tracking-tighter">SUB_{{ loop.index }}</span>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-white group-hover:text-sky-400 transition-colors">
+                        {{ subject }}
+                    </h3>
+                    
+                    <div class="mt-6 flex items-center text-sm font-medium text-slate-500 group-hover:text-slate-300">
+                        View Resources 
+                        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer class="mt-20 py-8 border-t border-slate-800 text-center">
+        <p class="text-slate-500 text-xs">Empowering Semester 4 Students at Soulful Arts Portal</p>
+    </footer>
+
+    <script>
+        function showSection(id) {
+            document.querySelectorAll("#notes-section, #ppt-section, #qb-section")
+                .forEach(section => section.style.display = "none");
+            document.getElementById(id).style.display = "block";
+        }
+    </script>
+</body>
+</html>

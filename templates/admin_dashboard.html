@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white p-10">
+<nav class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+    <a href="/admin/logout"
+   class="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-500">
+   Logout
+</a>
+</nav>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <a href="/admin/add-announcement"
+           class="p-6 bg-slate-800 rounded-xl hover:bg-sky-600 transition" style="text-align: center;">
+            Add Announcement
+        </a>
+
+        <a href="/admin/add-topic"
+           class="p-6 bg-slate-800 rounded-xl hover:bg-sky-600 transition" style="text-align: center;">
+            Add Topics
+        </a>
+
+        <a href="/admin/upload-resource"
+           class="p-6 bg-slate-800 rounded-xl hover:bg-sky-600 transition" style="text-align: center;">
+            Upload Resource
+        </a>
+        <a href="/admin/announcements"
+           class="p-6 bg-slate-800 rounded-xl hover:bg-sky-600 transition" style="text-align: center;">
+            Edit Announcements
+        </a>
+        <a href="/admin/topics"
+           class="p-6 bg-slate-800 rounded-xl hover:bg-sky-600 transition" style="text-align: center;">
+            Edit Topics
+        </a>
+        <a href="/admin/resources"
+           class="p-6 bg-slate-800 rounded-xl hover:bg-sky-600 transition" style="text-align: center;">
+            Manage Resources
+        </a>
+
+    </div>
+
+    <div class="mt-8 text-center">
+        <a href="/" class="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-500">
+            ← Back to Home
+        </a>
+    </div>
+</body>
+</html>

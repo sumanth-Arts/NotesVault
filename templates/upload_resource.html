@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Resource</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white p-10">
+
+<h1 class="text-2xl font-bold mb-6">Upload Resource</h1>
+
+<form method="POST" enctype="multipart/form-data" class="space-y-4 max-w-xl">
+
+   
+    <select name="semester" id="semester" required class="w-full p-3 bg-slate-800 rounded" onchange="filterSubjects()">
+        <option value="">Select Semester</option>
+        {% for sem in semesters %}
+        <option value="{{ sem }}">{{ sem }}</option>
+        {% endfor %}
+    </select>
+
+   
+    <select name="subject" id="subject" required class="w-full p-3 bg-slate-800 rounded" onchange="filterUnits()">
+        <option value="">Select Subject</option>
+    </select>
+
+    
+    <select name="unit" id="unit" required class="w-full p-3 bg-slate-800 rounded">
+        <option value="">Select Unit</option>
+    </select>
+
+    
+    <select name="type" required class="w-full p-3 bg-slate-800 rounded">
+        <option value="">Select Type</option>
+        <option value="ppt">PPT</option>
+        <option value="qb">Question Bank</option>
+    </select>
+
+    
+    <input type="file" name="file" required class="w-full">
+
+    <button class="bg-green-600 px-6 py-3 rounded w-full">
+        Upload
+    </button>
+
+</form>
+
+<script>
+const subjectsData = JSON.parse('{{ subjects | tojson | safe }}');
+const unitsData = JSON.parse('{{ units | tojson | safe }}');
+
+function filterSubjects() {
+    const semester = document.getElementById("semester").value;
+    const subjectDropdown = document.getElementById("subject");
+
+    subjectDropdown.innerHTML = "<option>Select Subject</option>";
+
+    subjectsData.forEach(([sem, sub]) => {
+        if (sem === semester) {
+            subjectDropdown.innerHTML += `<option value="${sub}">${sub}</option>`;
+        }
+    });
+
+    document.getElementById("unit").innerHTML = "<option>Select Unit</option>";
+}
+
+function filterUnits() {
+    const semester = document.getElementById("semester").value;
+    const subject = document.getElementById("subject").value;
+    const unitDropdown = document.getElementById("unit");
+
+    unitDropdown.innerHTML = "<option>Select Unit</option>";
+
+    unitsData.forEach(([sem, sub, unit]) => {
+        if (sem === semester && sub === subject) {
+            unitDropdown.innerHTML += `<option value="${unit}">${unit}</option>`;
+        }
+    });
+}
+</script>
+
+</body>
+</html>

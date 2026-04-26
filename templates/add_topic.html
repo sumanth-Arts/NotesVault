@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Topic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white p-10">
+<h1 class="text-2xl font-bold mb-6">Add Topic</h1>
+
+<form method="POST" enctype="multipart/form-data" class="space-y-4 max-w-3xl">
+
+    
+
+    
+    <select name="semester" id="semester" required
+        class="w-full p-3 bg-slate-800 rounded"
+        onchange="filterSubjects()">
+        <option value="">Select Semester</option>
+        {% for sem in semesters %}
+        <option value="{{ sem }}">{{ sem }}</option>
+        {% endfor %}
+    </select>
+
+    
+    <select name="subject" id="subject" required
+        class="w-full p-3 bg-slate-800 rounded"
+        onchange="filterUnits()">
+        <option value="">Select Subject</option>
+    </select>
+
+    
+    <select name="unit" id="unit" required
+        class="w-full p-3 bg-slate-800 rounded">
+        <option value="">Select Unit</option>
+    </select>
+
+    
+    <input name="title" placeholder="Topic Title" required
+        class="w-full p-3 bg-slate-800 rounded">
+
+    <textarea name="summary" placeholder="Summary" required
+        class="w-full p-3 bg-slate-800 rounded"></textarea>
+
+    <textarea name="definition" placeholder="Definition"
+        class="w-full p-3 bg-slate-800 rounded"></textarea>
+
+    <textarea name="example" placeholder="Example"
+        class="w-full p-3 bg-slate-800 rounded"></textarea>
+
+    <input type="file" name="image" class="w-full">
+
+
+    <h2 class="text-xl mt-6">Sections</h2>
+
+    <div id="sections"></div>
+
+    <button type="button" onclick="addSection()"
+        class="bg-sky-600 px-4 py-2 rounded">
+        + Add Section
+    </button>
+
+    <button class="bg-green-600 px-6 py-3 rounded mt-4 w-full">
+        Save Topic
+    </button>
+
+</form>
+
+
+<script>
+const subjectsData = JSON.parse('{{ subjects | tojson | safe }}');
+const unitsData = JSON.parse('{{ units | tojson | safe }}');
+
+
+function filterSubjects() {
+    const semester = document.getElementById("semester").value;
+    const subjectDropdown = document.getElementById("subject");
+
+    subjectDropdown.innerHTML = "<option value=''>Select Subject</option>";
+
+    subjectsData.forEach(([sem, sub]) => {
+        if (sem.toLowerCase().trim() === semester.toLowerCase().trim()) {
+            subjectDropdown.innerHTML += `<option value="${sub}">${sub}</option>`;
+        }
+    });
+
+    document.getElementById("unit").innerHTML = "<option value=''>Select Unit</option>";
+}
+
+function filterUnits() {
+    const semester = document.getElementById("semester").value;
+    const subject = document.getElementById("subject").value;
+    const unitDropdown = document.getElementById("unit");
+
+    unitDropdown.innerHTML = "<option value=''>Select Unit</option>";
+
+    unitsData.forEach(([sem, sub, unit]) => {
+        if (
+            sem.toLowerCase().trim() === semester.toLowerCase().trim() &&
+            sub.toLowerCase().trim() === subject.toLowerCase().trim()
+        ) {
+            unitDropdown.innerHTML += `<option value="${unit}">${unit}</option>`;
+        }
+    });
+}
+
+function addSection() {
+    const container = document.getElementById("sections");
+
+    const div = document.createElement("div");
+    div.className = "bg-slate-800 p-4 rounded mt-4";
+
+    div.innerHTML = `
+        <input name="section_title[]" placeholder="Section Title"
+               class="w-full p-2 mb-2 bg-slate-700 rounded" required>
+
+        <textarea name="section_content[]" placeholder="Section Content"
+                  class="w-full p-2 mb-2 bg-slate-700 rounded" required></textarea>
+
+        <input type="file" name="section_image[]">
+    `;
+
+    container.appendChild(div);
+}
+</script>
+
+</body>
+</html>

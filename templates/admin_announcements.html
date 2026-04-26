@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Announcements</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white p-10">
+
+<h1 class="text-2xl font-bold mb-6">Manage Announcements</h1>
+
+<table class="w-full border border-slate-700">
+    <thead class="bg-slate-800">
+        <tr>
+            <th class="p-3">Title</th>
+            <th>Message</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for a in announcements %}
+        <tr class="border-t border-slate-700">
+            <td class="p-3">{{ a[1] }}</td>
+            <td>{{ a[2] }}</td>
+            <td class="text-xs text-slate-400">{{ a[3] }}</td>
+
+            <td class="space-x-2">
+                <a href="/admin/edit-announcement/{{ a[0] }}"
+                   class="bg-blue-600 px-3 py-1 rounded">Edit</a>
+
+                <form action="/admin/delete-announcement/{{ a[0] }}" method="POST" class="inline">
+                    <button class="bg-red-600 px-3 py-1 rounded"
+                            onclick="return confirm('Delete this announcement?')">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>

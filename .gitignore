@@ -1,0 +1,68 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+venv/
+env/
+
+.idea/
+.vscode/
+
+*.db-journal
+*.sqlite3
+
+# Keep notes.db (DO NOT ignore notes.db)
+
+# Temporary / test / local scripts
+test.py
+debug.py
+random_script.py
+insert_temp.py
+
+add_loss_formula.py
+add_sem4_subjects.py
+add_units.py
+alter_table.py
+check_sem4_data.py
+check_uploads.py
+cleanup_unit4_sections.py
+count_sections.py
+database.py
+db_setup.py
+delete_old.py
+delete_section.py
+delete_topics.py
+manage_sections.py
+manage_sections2.py
+manage_topics.py
+setup_resources_table.py
+to_check_columns.py
+to_check_db.py
+update_sections.py
+update_topics.py
+view_sections.py
+view_topic_ids.py
+
+# Previously added scripts
+problem_bank.py
+test_notes.py
+
+# Environment files
+.env
+
+# Old / unused CSS backups
+style.css
+styles_old.css
+old_style.css
+
+# Design files
+*.psd
+*.ai
+
+# Node modules
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db

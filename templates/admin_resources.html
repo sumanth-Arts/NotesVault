@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Resources</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-900 text-white p-10">
+
+
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold">📂 Manage Resources</h1>
+
+    <a href="/admin/dashboard"
+       class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-sm">
+        ← Back to Dashboard
+    </a>
+</div>
+
+<div class="bg-slate-800/50 backdrop-blur-xl border border-slate-700 rounded-2xl shadow-lg overflow-hidden">
+
+    <table class="w-full text-sm">
+
+        <thead class="bg-slate-800 text-slate-400 uppercase text-xs tracking-wider">
+            <tr>
+                <th class="p-4 text-left">Semester</th>
+                <th class="text-left">Subject</th>
+                <th class="text-left">Unit</th>
+                <th class="text-left">Type</th>
+                <th class="text-left">File</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for r in resources %}
+            <tr class="border-t border-slate-700 hover:bg-slate-800/70 transition">
+
+                <td class="p-4 font-medium text-slate-300">{{ r[1] }}</td>
+                <td class="text-slate-400">{{ r[2] }}</td>
+                <td class="text-slate-400">{{ r[3] }}</td>
+
+                <td>
+                    <span class="px-2 py-1 text-xs rounded-lg 
+                        {% if r[4] == 'ppt' %}
+                            bg-indigo-500/20 text-indigo-400
+                        {% elif r[4] == 'qb' %}
+                            bg-emerald-500/20 text-emerald-400
+                        {% else %}
+                            bg-slate-600/20 text-slate-400
+                        {% endif %}
+                    ">
+                        {{ r[4] | upper }}
+                    </span>
+                </td>
+
+           
+                <td class="text-slate-400 truncate max-w-[200px]">
+                    {{ r[5] }}
+                </td>
+
+
+                <td class="text-center">
+                    <form action="/admin/delete-resource/{{ r[0] }}" method="POST">
+                        <button
+                            onclick="return confirm('Delete this file?')"
+                            class="bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white px-3 py-1 rounded-lg text-xs transition">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+
+            </tr>
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% if resources|length == 0 %}
+<div class="text-center mt-10 text-slate-500">
+    No resources uploaded yet.
+</div>
+{% endif %}
+
+</body>
+</html>

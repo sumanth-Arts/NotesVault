@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Topics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white p-10">
+<nav class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold">Manage Topics</h1>
+
+    <div class="flex items-center gap-4">
+        <button onclick="saveOrder()" class="bg-green-600 px-6 py-2 rounded">
+            Save Order
+        </button>
+
+        <a href="/admin/dashboard" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-sm">
+            ← Back to Dashboard
+        </a>
+    </div>
+</nav>
+
+<ul id="topicList" class="space-y-3">
+    {% for t in topics %}
+    <li class="p-4 bg-slate-800 rounded cursor-move flex justify-between items-center"
+        data-id="{{ t[0] }}">
+        
+        <span>
+            {{ t[1] }} | {{ t[2] }} | {{ t[3] }} → {{ t[4] }}
+        </span>
+
+        <div class="space-x-2">
+            <a href="/admin/edit-topic/{{ t[0] }}" class="bg-blue-600 px-2 py-1 rounded">Edit</a>
+
+            <form action="/admin/delete-topic/{{ t[0] }}" method="POST" class="inline">
+                <button class="bg-red-600 px-2 py-1 rounded">Delete</button>
+            </form>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+<script>
+new Sortable(document.getElementById('topicList'), {
+    animation: 150
+});
+
+function saveOrder() {
+    const items = document.querySelectorAll("#topicList li");
+    let order = [];
+
+    items.forEach((item, index) => {
+        order.push({
+            id: item.dataset.id,
+            order: index + 1
+        });
+    });
+
+    fetch("/admin/update-order", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(order)
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert("Order updated!");
+    });
+}
+</script>
+
+</body>
+</html>

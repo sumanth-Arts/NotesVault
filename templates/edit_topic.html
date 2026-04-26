@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Topic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-900 text-white p-10">
+
+
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold">✏️ Edit Topic</h1>
+
+    <a href="/admin/topics"
+       class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-sm">
+        ← Back
+    </a>
+</div>
+
+<form method="POST" enctype="multipart/form-data" class="space-y-6 max-w-4xl">
+
+
+    <input
+        name="title"
+        value="{{ topic[0] }}"
+        class="w-full p-3 bg-slate-800 rounded"
+        placeholder="Topic Title"
+    >
+
+    <textarea
+        name="summary"
+        class="w-full p-3 bg-slate-800 rounded"
+        placeholder="Summary"
+    >{{ topic[1] }}</textarea>
+
+    <textarea
+        name="definition"
+        class="w-full p-3 bg-slate-800 rounded"
+        placeholder="Definition"
+    >{{ topic[2] }}</textarea>
+
+    <textarea
+        name="example"
+        class="w-full p-3 bg-slate-800 rounded"
+        placeholder="Example"
+    >{{ topic[3] }}</textarea>
+
+
+    {% if topic[4] %}
+    <div>
+        <p class="text-sm text-slate-400 mb-2">Current Image:</p>
+
+        <img
+            src="{{ url_for('static', filename=topic[4]) }}"
+            class="w-48 mb-2 rounded"
+        >
+
+        <label class="flex items-center gap-2 text-red-400 text-sm">
+            <input type="checkbox" name="remove_image">
+            Remove Image
+        </label>
+    </div>
+    {% endif %}
+
+    <input
+        type="file"
+        name="image"
+        id="mainImageInput"
+        class="w-full"
+    >
+
+    <img
+        id="mainImagePreview"
+        class="mt-3 w-48 hidden rounded"
+    >
+
+
+    <h2 class="text-xl font-semibold mt-8">Sections</h2>
+
+    <div id="sections">
+
+        {% for section in sections %}
+        <div class="bg-slate-800 p-4 rounded mt-4">
+
+            <input
+                name="section_title[]"
+                value="{{ section[0] }}"
+                class="w-full p-2 mb-2 bg-slate-700 rounded"
+                placeholder="Section Title"
+            >
+
+            <textarea
+                name="section_content[]"
+                class="w-full p-2 mb-2 bg-slate-700 rounded"
+                placeholder="Section Content"
+            >{{ section[1] }}</textarea>
+
+            {% if section[2] %}
+            <img
+                src="{{ url_for('static', filename=section[2]) }}"
+                class="w-40 mb-2 rounded"
+            >
+
+            <label class="text-red-400 text-sm flex items-center gap-2">
+                <input type="checkbox" name="remove_section_image[]">
+                Remove Image
+            </label>
+            {% endif %}
+
+            <input
+                type="file"
+                name="section_image[]"
+                onchange="previewSectionImage(this)"
+            >
+
+            <img class="preview mt-2 w-32 hidden rounded">
+
+            <input
+                type="hidden"
+                name="existing_section_image[]"
+                value="{{ section[2] }}"
+            >
+
+            <button
+                type="button"
+                onclick="removeSection(this)"
+                class="bg-red-600 px-3 py-1 mt-3 rounded"
+            >
+                Delete Section
+            </button>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <button
+        type="button"
+        onclick="addSection()"
+        class="bg-sky-600 px-4 py-2 rounded mt-4"
+    >
+        + Add Section
+    </button>
+
+
+    <h2 class="text-xl font-semibold mt-8">Problem Bank</h2>
+
+    <div id="problems">
+
+        {% for problem in problems %}
+        <div class="bg-slate-800 p-4 rounded mt-4">
+
+            <input
+                name="problem[]"
+                value="{{ problem[0] }}"
+                placeholder="Problem"
+                class="w-full p-2 mb-2 bg-slate-700 rounded"
+            >
+
+            <textarea
+                name="solution[]"
+                placeholder="Solution"
+                class="w-full p-2 mb-2 bg-slate-700 rounded"
+            >{{ problem[1] }}</textarea>
+
+            <button
+                type="button"
+                onclick="removeProblem(this)"
+                class="bg-red-600 px-3 py-1 mt-2 rounded"
+            >
+                Delete Problem
+            </button>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <button
+        type="button"
+        onclick="addProblem()"
+        class="bg-purple-600 px-4 py-2 rounded mt-4"
+    >
+        + Add Problem
+    </button>
+
+
+    <button
+        class="bg-green-600 px-6 py-3 rounded mt-6 w-full"
+    >
+        Update Topic
+    </button>
+
+</form>
+
+
+<script>
+document.getElementById("mainImageInput").addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById("mainImagePreview");
+
+    if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.classList.remove("hidden");
+    }
+});
+
+
+function previewSectionImage(input) {
+    const file = input.files[0];
+    const preview = input.parentElement.querySelector(".preview");
+
+    if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.classList.remove("hidden");
+    }
+}
+
+
+function addSection() {
+    const container = document.getElementById("sections");
+
+    const div = document.createElement("div");
+    div.className = "bg-slate-800 p-4 rounded mt-4";
+
+    div.innerHTML = `
+        <input
+            name="section_title[]"
+            placeholder="Section Title"
+            class="w-full p-2 mb-2 bg-slate-700 rounded"
+        >
+
+        <textarea
+            name="section_content[]"
+            placeholder="Section Content"
+            class="w-full p-2 mb-2 bg-slate-700 rounded"
+        ></textarea>
+
+        <input
+            type="file"
+            name="section_image[]"
+            onchange="previewSectionImage(this)"
+        >
+
+        <img class="preview mt-2 w-32 hidden rounded">
+
+        <input
+            type="hidden"
+            name="existing_section_image[]"
+            value=""
+        >
+
+        <button
+            type="button"
+            onclick="removeSection(this)"
+            class="bg-red-600 px-3 py-1 mt-3 rounded"
+        >
+            Delete Section
+        </button>
+    `;
+
+    container.appendChild(div);
+}
+
+
+function removeSection(btn) {
+    btn.parentElement.remove();
+}
+
+
+
+function addProblem() {
+    const container = document.getElementById("problems");
+
+    const div = document.createElement("div");
+    div.className = "bg-slate-800 p-4 rounded mt-4";
+
+    div.innerHTML = `
+        <input
+            name="problem[]"
+            placeholder="Problem"
+            class="w-full p-2 mb-2 bg-slate-700 rounded"
+        >
+
+        <textarea
+            name="solution[]"
+            placeholder="Solution"
+            class="w-full p-2 mb-2 bg-slate-700 rounded"
+        ></textarea>
+
+        <button
+            type="button"
+            onclick="removeProblem(this)"
+            class="bg-red-600 px-3 py-1 mt-2 rounded"
+        >
+            Delete Problem
+        </button>
+    `;
+
+    container.appendChild(div);
+}
+
+
+function removeProblem(btn) {
+    btn.parentElement.remove();
+}
+</script>
+
+</body>
+</html>
