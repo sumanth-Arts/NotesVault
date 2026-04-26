@@ -314,8 +314,6 @@ def load_resource(semester, subject, unit, rtype):
 
 @app.route("/uploads/<path:filename>")
 def uploaded_file(filename):
-    if "admin_logged_in" not in session:
-        return redirect("/admin")
     return send_from_directory(UPLOAD_FOLDER, filename)
 
 
