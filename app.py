@@ -4,8 +4,9 @@ import sqlite3
 from datetime import datetime
 from datetime import timedelta
 import uuid
+from dotenv import load_dotenv
+load_dotenv()
 app = Flask(__name__)
-
 UPLOAD_FOLDER = "uploads"
 IMAGE_FOLDER = os.path.join("static", "images")
 
@@ -627,4 +628,4 @@ def admin_resources():
     return render_template("admin_resources.html", resources=resources)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

@@ -2,6 +2,15 @@
 <html>
 
 <head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EPB570WMLL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-EPB570WMLL');
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ subject_name }} | Learning Portal</title>
@@ -40,11 +49,11 @@
 
     <nav class="h-16 border-b border-slate-800 bg-slate-900/80 backdrop-blur-md flex items-center justify-between px-6 shrink-0 z-50">
         <div class="flex items-center gap-4">
-            <a href="/semester/{{ semester_name }}" class="p-2 hover:bg-slate-800 rounded-lg transition text-slate-400 hover:text-white">
+            <!-- <a href="/semester/{{ semester_name }}" class="p-2 hover:bg-slate-800 rounded-lg transition text-slate-400 hover:text-white">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
-            </a>
+            </a> -->
             <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-lg hover:bg-slate-800 text-slate-400">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
@@ -87,12 +96,21 @@
                         <button onclick="handleNavClick('{{ unit }}', 'qb')" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
                             <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> QB
                         </button>
+                        {% if subject_name == "Java" %}
+                        <div onclick="loadResource('lab')">
+                            <!-- Lab Programs -->
+                        </div>
+                        <button onclick="handleNavClick('{{ unit }}', 'lab')" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> Lab Programs
+                                        </button>
+                        {% endif %}
+                        
                     </div>
                 </div>
+                
                 {% endfor %}
             </div>
         </aside>
-
         <main class="flex-1 overflow-y-auto content-area p-6 md:p-12">
             <div id="notes-content" class="max-w-4xl mx-auto">
                 <div class="h-[60vh] flex flex-col items-center justify-center text-center">
