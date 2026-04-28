@@ -4,8 +4,7 @@ import sqlite3
 from datetime import datetime
 from datetime import timedelta
 import uuid
-from dotenv import load_dotenv
-load_dotenv()
+
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 IMAGE_FOLDER = os.path.join("static", "images")
