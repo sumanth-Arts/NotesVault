@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Feedback</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-950 text-white p-10">
+
+<h1 class="text-3xl font-bold mb-8">
+    User Feedback
+</h1>
+
+<div class="space-y-6">
+
+    {% for id, name, subject, issue_type, message, created_at in feedbacks %}
+
+    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+
+        <div class="flex justify-between items-center mb-4">
+
+            <div>
+                <h2 class="text-lg font-bold text-sky-400">
+                    {{ issue_type }}
+                </h2>
+
+                <p class="text-sm text-slate-400">
+                    {{ subject }}
+                </p>
+            </div>
+
+            <p class="text-xs text-slate-500">
+                {{ created_at }}
+            </p>
+
+        </div>
+
+        {% if name %}
+        <p class="text-sm text-slate-400 mb-2">
+            By: {{ name }}
+        </p>
+        {% endif %}
+
+        <p class="text-slate-300 whitespace-pre-line">
+            {{ message }}
+        </p>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+</body>
+</html>

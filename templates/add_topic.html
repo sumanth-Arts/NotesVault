@@ -59,6 +59,15 @@
         + Add Section
     </button>
 
+    <h2 class="text-xl mt-6">Problems</h2>
+
+    <div id="problems"></div>
+
+    <button type="button" onclick="addProblem()"
+        class="bg-sky-600 px-4 py-2 rounded">
+        + Add Problem
+    </button>
+
     <button class="bg-green-600 px-6 py-3 rounded mt-4 w-full">
         Save Topic
     </button>
@@ -117,6 +126,23 @@ function addSection() {
                   class="w-full p-2 mb-2 bg-slate-700 rounded" required></textarea>
 
         <input type="file" name="section_image[]">
+    `;
+
+    container.appendChild(div);
+}
+
+function addProblem() {
+    const container = document.getElementById("problems");
+
+    const div = document.createElement("div");
+    div.className = "bg-slate-800 p-4 rounded mt-4";
+
+    div.innerHTML = `
+        <input name="problem[]" placeholder="Problem"
+               class="w-full p-2 mb-2 bg-slate-700 rounded" required>
+
+        <textarea name="solution[]" placeholder="Solution"
+                  class="w-full p-2 mb-2 bg-slate-700 rounded" required></textarea>
     `;
 
     container.appendChild(div);

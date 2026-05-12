@@ -38,7 +38,8 @@
     <div class="space-y-6">
 
         {% for topic in content %}
-        <div class="group bg-slate-800/30 border border-slate-700/50 rounded-3xl overflow-hidden transition-all duration-300 hover:border-sky-500/50">
+        <div data-topic="{{ topic.title }}" 
+     class="group bg-slate-800/30 border border-slate-700/50 rounded-3xl overflow-hidden transition-all duration-300 hover:border-sky-500/50">
 
             <div
                 class="p-6 cursor-pointer flex justify-between items-start gap-4"
@@ -185,6 +186,31 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+<script>
+function scrollToTopic() {
+    const params = new URLSearchParams(window.location.search);
+    const topic = params.get("topic");
 
+    if (!topic) return;
+
+    const elements = document.querySelectorAll("[data-topic]");
+
+    elements.forEach(el => {
+        if (el.getAttribute("data-topic").trim().toLowerCase() === topic.trim().toLowerCase()) {
+
+            el.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+            el.classList.add("ring", "ring-sky-500");
+
+            setTimeout(() => {
+                el.classList.remove("ring", "ring-sky-500");
+            }, 2000);
+        }
+    });
+}
+</script>
 </body>
 </html>

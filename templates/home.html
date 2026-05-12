@@ -2,17 +2,16 @@
 <html class="scroll-smooth">
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-EPB570WMLL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-EPB570WMLL');
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EPB570WMLL"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-EPB570WMLL');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soulful Arts | Learning Portal</title>
+    <title>NotesVault | Study Smarter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     
@@ -32,18 +31,63 @@
         }
 
         body { overflow-x: hidden; }
+
+        /* Custom scrollbar for search suggestions */
+        #suggestions::-webkit-scrollbar {
+            width: 4px;
+        }
+        #suggestions::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-20px) translateX(10px); }
+            100% { transform: translateY(0px) translateX(0px); }
+        }
+        .glow-blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: -1;
+            animation: float 10s ease-in-out infinite;
+        }
     </style>
 </head>
 
 <body>
 
 <nav class="fixed top-0 w-full z-50 glass-nav">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <h2 class="text-lg md:text-xl font-bold tracking-tight">📘NotesVault</h2>
+    <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 flex justify-between items-center gap-4">
+        <h2 class="text-lg md:text-xl font-bold tracking-tight shrink-0">📘NotesVault</h2>
         
-       <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-400">
+        <!-- Responsive Search Bar -->
+        <div class="relative flex-1 max-w-md group">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-4 w-4 text-slate-400 group-focus-within:text-sky-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <input 
+                id="searchInput"
+                type="text" 
+                placeholder="Search topics..." 
+                class="w-full pl-10 pr-4 py-2 bg-slate-800/50 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all"
+                autocomplete="off"
+            >
+            
+            <!-- Search Suggestions Dropdown -->
+            <div id="suggestions" 
+                 class="absolute w-full mt-2 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl hidden z-50 overflow-y-auto max-h-80 backdrop-blur-xl">
+            </div>
+        </div>
+        
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center space-x-5 text-xs font-medium text-slate-400">
             <a href="javascript:void(0)" onclick="scrollToAbout()" class="hover:text-sky-400 transition">About</a>
-            <a href="/admin" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:border-sky-500 transition-all text-xs">Admin</a>
+            <a href="javascript:void(0)" onclick="scrollToCredits()" class="hover:text-sky-400 transition">Contributors</a>
+            <a href="javascript:void(0)" onclick="scrollToFooter()" class="hover:text-sky-400 transition">Report Issue</a>
+            <a href="/admin" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:border-sky-500 transition-all">Admin</a>
         </div> 
 
         <button onclick="toggleMobileMenu()" class="md:hidden text-slate-400 p-1">
@@ -51,8 +95,11 @@
         </button>
     </div>
 
+    <!-- Mobile Dropdown Menu -->
     <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-6 py-4 space-y-4">
         <a href="javascript:void(0)" onclick="scrollToAbout(); toggleMobileMenu();" class="block hover:text-sky-400 transition font-bold">About</a>
+        <a href="javascript:void(0)" onclick="scrollToCredits(); toggleMobileMenu();" class="block hover:text-sky-400 transition font-bold">Collaborators</a>
+        <a href="javascript:void(0)" onclick="scrollToFooter(); toggleMobileMenu();" class="block hover:text-sky-400 transition font-bold">Report Issue</a>
         <a href="/admin" class="block hover:text-sky-400 transition font-bold">Admin Panel</a>
     </div>
 </nav>
@@ -70,7 +117,7 @@
                 Study <span class="text-sky-500">Smarter</span>,<br class="hidden md:block"> Not Harder
             </h1>
             <p class="text-base md:text-lg text-slate-400 leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0">
-                Access semester-wise notes, PPTs, and question bank curated in one place. 
+                Access semester-wise notes, PPTs, question banks and handwritten notes from our college toppers, all curated in one place. 
                 Built for efficiency, designed for students.
             </p>
             <div class="flex justify-center lg:justify-start">
@@ -102,7 +149,84 @@
                         </div>
                         {% endfor %}
                     </div>
-                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Quick Stats Row -->
+<div class="max-w-7xl mx-auto px-6 mb-16">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="p-6 bg-slate-800/20 border border-slate-700/30 rounded-3xl text-center">
+            <div class="text-2xl font-bold text-sky-500">8</div>
+            <div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Semesters</div>
+        </div>
+        <div class="p-6 bg-slate-800/20 border border-slate-700/30 rounded-3xl text-center">
+            <div class="text-2xl font-bold text-indigo-500">20+</div>
+            <div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Subjects</div>
+        </div>
+        <div class="p-6 bg-slate-800/20 border border-slate-700/30 rounded-3xl text-center">
+            <div class="text-2xl font-bold text-emerald-500">100%</div>
+            <div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Free</div>
+        </div>
+        <div class="p-6 bg-slate-800/20 border border-slate-700/30 rounded-3xl text-center">
+            <div class="text-2xl font-bold text-rose-500">Exam</div>
+            <div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Focused</div>
+        </div>
+    </div>
+</div>
+<!-- Learning Protocol & Disclaimer Section -->
+<section class="max-w-7xl mx-auto px-6 mb-20">
+    <div class="relative p-8 md:p-12 bg-gradient-to-br from-slate-800/40 to-slate-900/40 border border-slate-700/50 rounded-[3rem] overflow-hidden">
+        <!-- Background Glow for the card -->
+        <div class="absolute -top-24 -right-24 w-64 h-64 bg-sky-500/10 rounded-full blur-[80px]"></div>
+        
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-6 leading-tight">
+                    The <span class="text-sky-500">Last-Minute</span> <br>Survival Guide
+                </h2>
+                <p class="text-slate-400 text-sm md:text-base leading-relaxed mb-6">
+                    NotesVault is engineered specifically for high-efficiency, last-minute preparation. We’ve stripped away the fluff to give you exactly what shows up on the exam paper, structured strictly according to your college syllabus.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Verified Content -->
+                <div class="p-5 bg-slate-900/50 border border-slate-700/30 rounded-2xl">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <h4 class="text-white font-bold text-sm mb-2">Faculty Verified</h4>
+                    <p class="text-slate-500 text-xs leading-relaxed">All PPTs and Question Banks are sourced directly from college faculty and verified for accuracy.</p>
+                </div>
+
+                <!-- Revision Focus -->
+                <div class="p-5 bg-slate-900/50 border border-slate-700/30 rounded-2xl">
+                    <div class="w-8 h-8 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-500 mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <h4 class="text-white font-bold text-sm mb-2">Revision Hub</h4>
+                    <p class="text-slate-500 text-xs leading-relaxed">Perfect for revision or "enough to pass." For deep conceptual mastery, textbooks remain the gold standard.</p>
+                </div>
+
+                <!-- Constant Updates -->
+                <div class="p-5 bg-slate-900/50 border border-slate-700/30 rounded-2xl">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-500 mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <h4 class="text-white font-bold text-sm mb-2">Live Iterations</h4>
+                    <p class="text-slate-500 text-xs leading-relaxed">Notes are constantly updated based on the latest syllabus changes and faculty feedback.</p>
+                </div>
+
+                <!-- Syllabus Aligned -->
+                <div class="p-5 bg-slate-900/50 border border-slate-700/30 rounded-2xl">
+                    <div class="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-500 mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <h4 class="text-white font-bold text-sm mb-2">Syllabus Sync</h4>
+                    <p class="text-slate-500 text-xs leading-relaxed">Every unit and topic follows the exact hierarchy of our official college curriculum.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -113,7 +237,7 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
             <div>
                 <h2 class="text-2xl md:text-3xl font-bold">Choose Your Semester</h2>
-                <p class="text-slate-500 text-sm mt-1">Swipe horizontally to navigate.</p>
+                <p class="text-slate-500 text-sm mt-1">Select a semester to access the vault.</p>
             </div>
             <div class="hidden md:flex gap-3">
                 <button onclick="document.getElementById('scroll-container').scrollLeft -= 350" class="p-4 rounded-2xl bg-slate-800 hover:bg-slate-700 transition">
@@ -135,7 +259,7 @@
                         </div>
                         <h3 class="text-2xl md:text-3xl font-extrabold text-white">{{ semester }}</h3>
                         <p class="text-slate-400 mt-4 text-xs md:text-sm leading-relaxed">
-                            Notes, PPTs, and Question Banks.
+                            Full curriculum resources: Notes, PPTs, and Question Banks.
                         </p>
                     </div>
                     <div class="space-y-4">
@@ -155,47 +279,251 @@
 </section>
 
 <section id="about-section" class="max-w-3xl mx-auto px-6 py-16 md:py-20 text-center">
-    
-    <h2 class="text-2xl md:text-3xl font-bold mb-4 text-white">About the Portal</h2>
-    <p class="text-sm md:text-lg text-slate-400 leading-relaxed">
-
-NotesVault was created to make studying simple, fast, and stress-free for students.<br>
-
-It brings semester-wise notes, unit-wise concepts, PPTs, and question banks into one place for quick learning and easy revision. The notes are short, clear, and exam-focused, helping students prepare efficiently—even at the last moment.<br>
-
-This platform was designed and developed by Sumanth, a B.Tech CSIT student, with the goal of helping students learn smarter and score better.<br>
-
-Built by a student, for students.<br>
-
+    <h2 class="text-2xl md:text-3xl font-bold mb-6 text-white">About the Portal</h2>
+    <p class="text-sm md:text-lg text-slate-400 leading-relaxed space-y-4">
+        NotesVault was created to make studying simple, fast, and stress-free for students.
+        It brings semester-wise resources into one place for quick learning and easy revision. 
+        <br><br>
+        Designed and developed by Sumanth, a B.Tech CSIT student, with the goal of helping peers learn smarter and score better.
     </p>
-
 </section>
 
-<section class="max-w-5xl mx-auto px-6 py-16 md:py-20">
-    <h3 class="text-xl md:text-2xl font-bold mb-10 text-center">How to Use</h3>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-        <div class="bg-slate-800/30 p-6 rounded-3xl border border-slate-700/50">
-            <div class="text-sky-500 text-2xl font-bold mb-3">01</div>
-            <p class="text-slate-300 text-sm font-semibold mb-1">Identify</p>
-            <p class="text-slate-500 text-xs leading-relaxed">Select your current semester from the slider above.</p>
+<section id="credits-section">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex justify-between items-end mb-10">
+            <div>
+                <h2 class="text-3xl font-bold">The Credits</h2>
+            </div>
+
+            <div class="hidden md:flex gap-3">
+                <button onclick="document.getElementById('contributor-scroll').scrollLeft -= 300" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
+                <button onclick="document.getElementById('contributor-scroll').scrollLeft += 300" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
+            </div>
         </div>
-        <div class="bg-slate-800/30 p-6 rounded-3xl border border-slate-700/50">
-            <div class="text-sky-500 text-2xl font-bold mb-3">02</div>
-            <p class="text-slate-300 text-sm font-semibold mb-1">Select</p>
-            <p class="text-slate-500 text-xs leading-relaxed">Choose the subject you want to study for.</p>
-        </div>
-        <div class="bg-slate-800/30 p-6 rounded-3xl border border-slate-700/50">
-            <div class="text-sky-500 text-2xl font-bold mb-3">03</div>
-            <p class="text-slate-300 text-sm font-semibold mb-1">Learn</p>
-            <p class="text-slate-500 text-xs leading-relaxed">Access notes and PPT's instantly.</p>
+
+        <div id="contributor-scroll" class="flex gap-6 overflow-x-auto pb-8 no-scrollbar scroll-smooth snap-x">
+            
+            <div class="flex-shrink-0 w-[280px] snap-center">
+                <div class="p-6 rounded-[2rem] bg-slate-800/20 border border-slate-700/50 hover:border-sky-500/50 transition-all group">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-500 font-bold border border-sky-500/20">
+                            NG
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-sm">Navya G</h4>
+                            <p class="text-[9px] text-slate-500 uppercase tracking-tighter">CONTENT CONTRIBUTOR</p>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed mb-4">
+                        Curated deep technical notes for Engineering Mathematics, DAA and OS.
+                    </p>
+                    <div class="flex gap-2">
+                        <span class="px-2 py-1 bg-slate-900 rounded-md text-[8px] text-slate-500 border border-slate-800 font-bold uppercase">Python</span>
+                        <span class="px-2 py-1 bg-slate-900 rounded-md text-[8px] text-slate-500 border border-slate-800 font-bold uppercase">Flask</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-shrink-0 w-[280px] snap-center">
+                <div class="p-6 rounded-[2rem] bg-slate-800/20 border border-slate-700/50 hover:border-indigo-500/50 transition-all group">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 font-bold border border-indigo-500/20">
+                            Y
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-sm">Yashita</h4>
+                            <p class="text-[9px] text-slate-500 uppercase tracking-tighter">Content Strategist</p>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed mb-4">
+                        Helped gathering and organizing PPTs for various subjects.
+                    </p>
+                    <div class="flex gap-2">
+                        <span class="px-2 py-1 bg-slate-900 rounded-md text-[8px] text-slate-500 border border-slate-800 font-bold uppercase">Unit 3</span>
+                        <span class="px-2 py-1 bg-slate-900 rounded-md text-[8px] text-slate-500 border border-slate-800 font-bold uppercase">Sem 4</span>
+                    </div>
+                </div>
+            </div>
+                        <div class="flex-shrink-0 w-[280px] snap-center">
+                <div class="p-6 rounded-[2rem] bg-slate-800/20 border border-slate-700/50 hover:border-indigo-500/50 transition-all group">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 font-bold border border-indigo-500/20">
+                            DI
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-sm">Dishant</h4>
+                            <p class="text-[9px] text-slate-500 uppercase tracking-tighter">Motivator</p>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed mb-4">
+                        Motivating the team and keeping everyone focused on our goals.
+                    </p>
+                    <div class="flex gap-2">
+                        <span class="px-2 py-1 bg-slate-900 rounded-md text-[8px] text-slate-500 border border-slate-800 font-bold uppercase">Motivation</span>
+                        <span class="px-2 py-1 bg-slate-900 rounded-md text-[8px] text-slate-500 border border-slate-800 font-bold uppercase">Sem 4</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex-shrink-0 w-[280px] snap-center">
+                <div class="p-6 rounded-[2rem] bg-slate-800/20 border border-slate-700/50 hover:border-indigo-500/50 transition-all group">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 font-bold border border-indigo-500/20">
+                            DI
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-sm">Divyansh</h4>
+                            <p class="text-[9px] text-slate-500 uppercase tracking-tighter">website testing</p>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed mb-4">
+                        Testing the website for any issues.<br>
+                        Fixing bugs and improving performance.
+
+                    </p>
+                    <div class="flex gap-2">
+                        <span class="px-2 py-1 bg-slate-900 rounded-md text-[8px] text-slate-500 border border-slate-800 font-bold uppercase">Testing</span>
+                        <span class="px-2 py-1 bg-slate-900 rounded-md text-[8px] text-slate-500 border border-slate-800 font-bold uppercase">Sem 4</span>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </div>
 </section>
+<footer id="footer-section" class="mt-28 border-t border-slate-800/50 bg-slate-900/20 pt-16 pb-10">
+    <div class="max-w-7xl mx-auto px-6 text-center">
 
-<footer class="py-10 text-center text-slate-600 text-[10px] md:text-xs border-t border-slate-800">
-    <p>&copy; 2026 NotesVault – College Notes Portal. All rights reserved.</p>
+        <div class="mb-12">
+            <h3 class="text-white font-bold mb-2">Help Us Improve</h3>
+            <p class="text-slate-400 text-sm mb-6 max-w-sm mx-auto">
+                Found an issue or missing content? Join the mission to make NotesVault better for everyone.
+            </p>
+
+            <button onclick="openFeedbackModal()"
+                    class="group relative inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-500 transition-all px-6 py-3 rounded-2xl font-bold text-white shadow-lg shadow-sky-600/20 active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Report Issue / Feedback
+            </button>
+        </div>
+
+
+        <div class=" flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-slate-600 text-[10px] uppercase tracking-[0.2em] font-bold">
+                &copy; 2026 NotesVault – Precise Academic Intelligence.
+            </p>
+            
+            <div class="flex gap-6">
+                <a href="/admin" class="text-slate-600 hover:text-sky-500 text-[10px] uppercase tracking-widest font-bold transition">Admin Terminal</a>
+                <span class="text-slate-800">|</span>
+                <span class="text-slate-600 text-[10px] uppercase tracking-widest font-bold">Class of 2026</span>
+            </div>
+        </div>
+    </div>
 </footer>
 
+<div id="feedbackModal"
+     class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
+
+    <div class="bg-slate-900 w-full max-w-lg p-8 rounded-2xl border border-slate-700">
+
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-white">
+                Report Issue
+            </h2>
+
+            <button onclick="closeFeedbackModal()"
+                    class="text-slate-400 hover:text-white text-xl">
+                ✕
+            </button>
+        </div>
+
+        <form method="POST" action="/submit-feedback" class="space-y-4">
+
+            <input
+                type="text"
+                name="name"
+                placeholder="Your Name (Optional)"
+                class="w-full p-3 rounded bg-slate-800 border border-slate-700 text-white"
+            >
+
+            <input
+                type="text"
+                name="subject"
+                placeholder="Subject"
+                class="w-full p-3 rounded bg-slate-800 border border-slate-700 text-white"
+            >
+
+            <select
+                name="issue_type"
+                class="w-full p-3 rounded bg-slate-800 border border-slate-700 text-white">
+
+                <option value="">Select Issue Type</option>
+
+                <option value="Wrong Information">
+                    Wrong Information
+                </option>
+
+                <option value="Missing Topic">
+                    Missing Topic
+                </option>
+
+                <option value="Broken Resource">
+                    Broken Resource
+                </option>
+
+                <option value="Suggestion">
+                    Suggestion
+                </option>
+
+                <option value="Other">
+                    Other
+                </option>
+
+            </select>
+
+            <textarea
+                name="message"
+                rows="5"
+                placeholder="Describe the issue..."
+                required
+                class="w-full p-3 rounded bg-slate-800 border border-slate-700 text-white"></textarea>
+
+            <button
+                class="w-full bg-sky-600 hover:bg-sky-700 transition py-3 rounded-xl font-semibold">
+
+                Submit Feedback
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+<script>
+function openFeedbackModal() {
+    document.getElementById("feedbackModal")
+        .classList.remove("hidden");
+
+    document.getElementById("feedbackModal")
+        .classList.add("flex");
+}
+
+function closeFeedbackModal() {
+    document.getElementById("feedbackModal")
+        .classList.add("hidden");
+
+    document.getElementById("feedbackModal")
+        .classList.remove("flex");
+}
+</script>
 <script>
 function toggleMobileMenu() {
     const menu = document.getElementById('mobile-menu');
@@ -204,7 +532,7 @@ function toggleMobileMenu() {
 
 function scrollToAbout() {
     const aboutSection = document.getElementById('about-section');
-    const offset = 80; 
+    const offset = 100; 
     const bodyRect = document.body.getBoundingClientRect().top;
     const elementRect = aboutSection.getBoundingClientRect().top;
     const elementPosition = elementRect - bodyRect;
@@ -215,7 +543,98 @@ function scrollToAbout() {
         behavior: 'smooth'
     });
 }
-</script>
 
+function scrollToCredits() {
+    const creditsSection = document.getElementById('credits-section');
+    const offset = 100; 
+    const bodyRect = document.body.getBoundingClientRect().top;
+    const elementRect = creditsSection.getBoundingClientRect().top;
+    const elementPosition = elementRect - bodyRect;
+    const offsetPosition = elementPosition - offset;
+
+    window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+    });
+}
+
+function scrollToFooter() {
+    const footerSection = document.getElementById('footer-section');
+    const offset = 100; 
+    const bodyRect = document.body.getBoundingClientRect().top;
+    const elementRect = footerSection.getBoundingClientRect().top;
+    const elementPosition = elementRect - bodyRect;
+    const offsetPosition = elementPosition - offset;
+
+    window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+    });
+}
+
+// Optimized Search Suggestion Logic
+const input = document.getElementById("searchInput");
+const box = document.getElementById("suggestions");
+
+input.addEventListener("input", async () => {
+    const query = input.value.trim();
+
+    if (query.length < 2) {
+        box.classList.add("hidden");
+        return;
+    }
+
+    try {
+        const res = await fetch(`/search_suggestions?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+
+        box.innerHTML = "";
+
+        if (data.results.length === 0) {
+            box.innerHTML = `<div class="p-4 text-slate-500 text-sm italic">No topics found.</div>`;
+            box.classList.remove("hidden");
+            return;
+        }
+
+        data.results.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "p-4 hover:bg-sky-500/10 cursor-pointer border-b border-slate-800 last:border-0 transition-colors group";
+
+            const isDirectMatch = item.topic.toLowerCase().includes(input.value.toLowerCase());
+
+            div.innerHTML = `
+                <div class="flex flex-col">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[10px] text-sky-500 font-bold uppercase tracking-wider">
+                            ${item.semester} • ${item.subject}
+                        </span>
+                        ${!isDirectMatch ? '<span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded">Found in Content</span>' : ''}
+                    </div>
+                    <span class="text-white text-sm font-semibold group-hover:text-sky-400 transition-colors">
+                        ${item.topic}
+                    </span>
+                    <span class="text-[10px] text-slate-500 mt-1">${item.unit}</span>
+                </div>
+            `;
+            div.onclick = () => {
+                window.location.href = 
+                    `/subject/${encodeURIComponent(item.semester)}/${encodeURIComponent(item.subject)}?unit=${encodeURIComponent(item.unit)}&topic=${encodeURIComponent(item.topic)}`;
+            };
+
+            box.appendChild(div);
+        });
+
+        box.classList.remove("hidden");
+    } catch (err) {
+        console.error("Search fetch error:", err);
+    }
+});
+
+document.addEventListener("click", (e) => {
+    if (!input.contains(e.target) && !box.contains(e.target)) {
+        box.classList.add("hidden");
+    }
+});
+</script>
 </body>
 </html>

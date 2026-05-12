@@ -1,53 +1,113 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Panel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | NotesVault</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0f172a; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
 </head>
-<body class="bg-slate-900 text-white p-10">
-<nav class="flex justify-between items-center mb-8">
-    <h1 class="text-3xl font-bold">Admin Dashboard</h1>
-    <a href="/admin/logout"
-   class="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-500">
-   Logout
-</a>
-</nav>
+<body class="text-white min-h-screen p-6 md:p-12">
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="max-w-6xl mx-auto">
+    <!-- Top Navigation -->
+    <nav class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
+        <div>
+            <h1 class="text-3xl font-black tracking-tight">Admin <span class="text-sky-500">Dashboard</span></h1>
+            <p class="text-slate-500 text-sm mt-1">Manage the Vault's intelligence and resources.</p>
+        </div>
+        
+        <div class="flex items-center gap-3">
+            <a href="/admin/download-db" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold border border-slate-700 transition flex items-center gap-2">
+                <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                DB Backup
+            </a>
+            <a href="/admin/feedback" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold border border-slate-700 transition flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Feedback
+            </a>
+            <a href="/admin/logout" class="px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 rounded-xl text-xs font-bold transition">
+                Logout
+            </a>
+        </div>
+    </nav>
 
-        <a href="/admin/add-announcement"
-           class="p-6 bg-slate-800 rounded-xl hover:bg-sky-600 transition" style="text-align: center;">
-            Add Announcement
-        </a>
+    <!-- Content Creation Section -->
+    <div class="mb-12">
+        <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-6">Create & Upload</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <a href="/admin/add-topic" class="group glass-card p-8 rounded-[2.5rem] hover:border-sky-500/50 transition-all duration-300">
+                <div class="w-12 h-12 bg-sky-500/10 rounded-2xl flex items-center justify-center text-sky-500 mb-6 group-hover:scale-110 transition-transform">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <h3 class="text-lg font-bold mb-2">Add New Topic</h3>
+                <p class="text-slate-500 text-xs leading-relaxed">Insert syllabus units, notes, and interactive problems.</p>
+            </a>
 
-        <a href="/admin/add-topic"
-           class="p-6 bg-slate-800 rounded-xl hover:bg-sky-600 transition" style="text-align: center;">
-            Add Topics
-        </a>
+            <a href="/admin/add-announcement" class="group glass-card p-8 rounded-[2.5rem] hover:border-indigo-500/50 transition-all duration-300">
+                <div class="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 mb-6 group-hover:scale-110 transition-transform">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <h3 class="text-lg font-bold mb-2">Broadcast</h3>
+                <p class="text-slate-500 text-xs leading-relaxed">Send live updates about exams, notes, or site features.</p>
+            </a>
 
-        <a href="/admin/upload-resource"
-           class="p-6 bg-slate-800 rounded-xl hover:bg-sky-600 transition" style="text-align: center;">
-            Upload Resource
-        </a>
-        <a href="/admin/announcements"
-           class="p-6 bg-slate-800 rounded-xl hover:bg-sky-600 transition" style="text-align: center;">
-            Edit Announcements
-        </a>
-        <a href="/admin/topics"
-           class="p-6 bg-slate-800 rounded-xl hover:bg-sky-600 transition" style="text-align: center;">
-            Edit Topics
-        </a>
-        <a href="/admin/resources"
-           class="p-6 bg-slate-800 rounded-xl hover:bg-sky-600 transition" style="text-align: center;">
-            Manage Resources
-        </a>
+            <a href="/admin/upload-resource" class="group glass-card p-8 rounded-[2.5rem] hover:border-emerald-500/50 transition-all duration-300">
+                <div class="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500 mb-6 group-hover:scale-110 transition-transform">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <h3 class="text-lg font-bold mb-2">Resource Vault</h3>
+                <p class="text-slate-500 text-xs leading-relaxed">Upload Faculty PPTs, Question Banks, and PDF guides.</p>
+            </a>
 
+        </div>
     </div>
 
-    <div class="mt-8 text-center">
-        <a href="/" class="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-500">
-            ← Back to Home
+    <!-- Management Section -->
+    <div>
+        <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-6">Database Management</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <a href="/admin/topics" class="flex items-center gap-4 p-6 bg-slate-800/20 border border-slate-800 rounded-2xl hover:bg-slate-800/40 transition group">
+                <div class="p-3 bg-slate-800 rounded-xl group-hover:text-sky-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <span class="font-bold text-sm">Edit Topics</span>
+            </a>
+
+            <a href="/admin/announcements" class="flex items-center gap-4 p-6 bg-slate-800/20 border border-slate-800 rounded-2xl hover:bg-slate-800/40 transition group">
+                <div class="p-3 bg-slate-800 rounded-xl group-hover:text-indigo-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <span class="font-bold text-sm">Manage Announcements</span>
+            </a>
+
+            <a href="/admin/resources" class="flex items-center gap-4 p-6 bg-slate-800/20 border border-slate-800 rounded-2xl hover:bg-slate-800/40 transition group">
+                <div class="p-3 bg-slate-800 rounded-xl group-hover:text-emerald-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <span class="font-bold text-sm">Organize Vault</span>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Back to Home -->
+    <div class="mt-20 border-t border-slate-800 pt-10 text-center">
+        <a href="/" class="text-slate-500 hover:text-white text-xs font-bold uppercase tracking-widest transition">
+            ← Exit Admin Terminal
         </a>
     </div>
+</div>
+
 </body>
 </html>

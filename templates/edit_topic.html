@@ -143,38 +143,23 @@
     </button>
 
 
-    <h2 class="text-xl font-semibold mt-8">Problem Bank</h2>
+<h2 class="text-xl font-semibold mt-8">Problem Bank</h2>
+<div id="problems">
+    {% for problem in problems %}
+    <div class="bg-slate-800 p-4 rounded mt-4">
+        <input name="problem[]" value="{{ problem[0] }}" placeholder="Problem"
+               class="w-full p-2 mb-2 bg-slate-700 rounded">
 
-    <div id="problems">
+        <textarea name="solution[]" placeholder="Solution"
+                  class="w-full p-2 mb-2 bg-slate-700 rounded">{{ problem[1] }}</textarea>
 
-        {% for problem in problems %}
-        <div class="bg-slate-800 p-4 rounded mt-4">
-
-            <input
-                name="problem[]"
-                value="{{ problem[0] }}"
-                placeholder="Problem"
-                class="w-full p-2 mb-2 bg-slate-700 rounded"
-            >
-
-            <textarea
-                name="solution[]"
-                placeholder="Solution"
-                class="w-full p-2 mb-2 bg-slate-700 rounded"
-            >{{ problem[1] }}</textarea>
-
-            <button
-                type="button"
-                onclick="removeProblem(this)"
-                class="bg-red-600 px-3 py-1 mt-2 rounded"
-            >
-                Delete Problem
-            </button>
-
-        </div>
-        {% endfor %}
-
+        <button type="button" onclick="removeProblem(this)"
+                class="bg-red-600 px-3 py-1 mt-2 rounded">
+            Delete Problem
+        </button>
     </div>
+    {% endfor %}
+</div>
 
     <button
         type="button"

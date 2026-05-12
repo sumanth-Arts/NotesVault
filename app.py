@@ -4,6 +4,9 @@ import sqlite3
 from datetime import datetime
 from datetime import timedelta
 import uuid
+import dotenv
+from flask import send_file
+
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
@@ -12,9 +15,7 @@ IMAGE_FOLDER = os.path.join("static", "images")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(IMAGE_FOLDER, exist_ok=True)
 
-ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
-app.secret_key = os.getenv("SECRET_KEY")
+
 
 semesters = [f"Semester {i}" for i in range(1, 9)]
 
@@ -72,6 +73,7 @@ def add_announcement():
 def add_topic():
     if "admin_logged_in" not in session:
         return redirect("/admin")
+
     if request.method == "POST":
         semester = request.form["semester"]
         subject = request.form["subject"]
@@ -81,70 +83,81 @@ def add_topic():
         definition = request.form["definition"]
         example = request.form["example"]
 
-        image = request.files["image"]
+        # Handle main topic image
+        image = request.files.get("image")
         image_path = ""
-
         if image and image.filename != "":
             filename = str(uuid.uuid4()) + "_" + image.filename
             image_path = f"images/{filename}"
             image.save(os.path.join(IMAGE_FOLDER, filename))
 
+        # Get lists for sections
+        section_titles = request.form.getlist("section_title[]")
+        section_contents = request.form.getlist("section_content[]")
+        section_images = request.files.getlist("section_image[]")
+
         conn = sqlite3.connect("notes.db")
-        cursor = conn.cursor()
+        try:
+            cursor = conn.cursor()
 
-        cursor.execute("""
-            INSERT INTO notes (semester, subject, unit, topic, content, definition, example, image_path)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (semester, subject, unit, title, summary, definition, example, image_path))
+            # 1. Insert into notes table
+            cursor.execute("""
+                INSERT INTO notes (semester, subject, unit, topic, content, definition, example, image_path)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (semester, subject, unit, title, summary, definition, example, image_path))
 
-        topic_id = cursor.lastrowid
+            topic_id = cursor.lastrowid
 
-    section_titles = request.form.getlist("section_title[]")
-    section_contents = request.form.getlist("section_content[]")
-    section_images = request.files.getlist("section_image[]")
-    existing_images = request.form.getlist("existing_section_image[]")
-    remove_flags = request.form.getlist("remove_section_image[]")
+            # 2. Insert sections in the SAME transaction
+            for i in range(len(section_titles)):
+                sec_img_path = ""
+                if i < len(section_images) and section_images[i].filename != "":
+                    filename = str(uuid.uuid4()) + "_" + section_images[i].filename
+                    sec_img_path = f"images/{filename}"
+                    section_images[i].save(os.path.join(IMAGE_FOLDER, filename))
 
-    IMAGE_FOLDER = os.path.join("static", "images")
+                cursor.execute("""
+                    INSERT INTO topic_sections (topic_id, section_title, section_content, image_path, section_order)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (topic_id, section_titles[i], section_contents[i], sec_img_path, i))
 
-    for i in range(len(section_titles)):
-        sec_img_path = existing_images[i] if i < len(existing_images) else ""
+# ... (Inside your add_topic try block, after inserting sections) ...
 
-        remove_flag = False
-        if i < len(remove_flags):
-            remove_flag = remove_flags[i] == "on"
+        # 3. Insert Problems into problem_bank
+            problems = request.form.getlist("problem[]")
+            solutions = request.form.getlist("solution[]")
 
-        if remove_flag and sec_img_path:
-            old_path = os.path.join("static", sec_img_path)
-            if os.path.exists(old_path):
-                os.remove(old_path)
-            sec_img_path = ""
+            for i in range(len(problems)):
+                if problems[i].strip():  # Only insert if problem text exists
+                    cursor.execute("""
+                        INSERT INTO problem_bank (topic_id, problem, solution, problem_order)
+                        VALUES (?, ?, ?, ?)
+                    """, (topic_id, problems[i], solutions[i], i))
 
-        elif section_images[i] and section_images[i].filename != "":
-            filename = str(uuid.uuid4()) + "_" + section_images[i].filename
-            sec_img_path = f"images/{filename}"
-            section_images[i].save(os.path.join(IMAGE_FOLDER, filename))
-
-        cursor.execute("""
-            INSERT INTO topic_sections (topic_id, section_title, section_content, image_path, section_order)
-            VALUES (?, ?, ?, ?, ?)
-        """, (topic_id, section_titles[i], section_contents[i], sec_img_path, i))
-
-        conn.commit()
-        conn.close()
+            conn.commit()
+        except Exception as e:
+            print(f"Error during POST: {e}")
+            conn.rollback()
+        finally:
+            conn.close()
 
         return redirect("/admin/dashboard")
 
+    # --- GET REQUEST LOGIC (Loading the form) ---
+    # This only runs if the method is NOT POST
     conn = sqlite3.connect("notes.db")
-    cursor = conn.cursor()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT DISTINCT semester, subject FROM notes")
+        subjects = cursor.fetchall()
 
-    cursor.execute("SELECT DISTINCT semester, subject FROM notes")
-    subjects = cursor.fetchall()
-
-    cursor.execute("SELECT DISTINCT semester, subject, unit FROM notes")
-    units = cursor.fetchall()
-
-    conn.close()
+        cursor.execute("SELECT DISTINCT semester, subject, unit FROM notes")
+        units = cursor.fetchall()
+    except Exception as e:
+        print(f"Error during GET: {e}")
+        subjects, units = [], []
+    finally:
+        conn.close()
 
     return render_template("add_topic.html",
                            semesters=semesters,
@@ -204,6 +217,7 @@ def subject(semester_name, subject_name):
     conn = sqlite3.connect("notes.db")
     cursor = conn.cursor()
 
+    # get all units
     cursor.execute("""
         SELECT DISTINCT unit
         FROM notes
@@ -212,12 +226,33 @@ def subject(semester_name, subject_name):
     """, (semester_name, subject_name))
 
     units = [row[0] for row in cursor.fetchall()]
+
+    # get selected unit
+    selected_unit = request.args.get("unit")
+
+    # if no unit → default to first
+    if not selected_unit and units:
+        selected_unit = units[0]
+
+    # get topics for selected unit
+    topics = []
+    if selected_unit:
+        cursor.execute("""
+            SELECT id, topic, content, definition, example
+            FROM notes
+            WHERE semester=? AND subject=? AND unit=?
+        """, (semester_name, subject_name, selected_unit))
+
+        topics = cursor.fetchall()
+
     conn.close()
 
     return render_template("subject.html",
                            semester_name=semester_name,
                            subject_name=subject_name,
-                           units=units)
+                           units=units,
+                           selected_unit=selected_unit,
+                           topics=topics)
 
 
 @app.route("/unit_content/<semester>/<subject>/<unit>")
@@ -289,28 +324,57 @@ def load_resource(semester, subject, unit, rtype):
     conn.close()
 
     if not result:
-        return "<h2>No resource found</h2>"
+        return "<div style='padding:40px; color:white;'><h2>No resource found</h2></div>"
 
-    file_name = result[0]
+    file_path = result[0]
+    
+    # CSS to make the container look perfect in fullscreen mode
+    fullscreen_style = """
+    <style>
+        #resource-container:fullscreen {
+            background: white;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #resource-container:fullscreen iframe {
+            height: 100vh !important;
+            border-radius: 0 !important;
+        }
+    </style>
+    """
 
-    base_url = request.host_url
-    file_url = f"{base_url}uploads/{file_name}"
-
-    if file_name.lower().endswith(".pdf"):
-        return f"""
-        <div class='card'>
-            <h2>{unit} - {rtype.upper()}</h2>
-            <iframe src='/uploads/{file_name}' width='100%' height='600px'></iframe>
-        </div>
-        """
-    return f"""
-    <div class='card'>
-        <h2>{unit} - {rtype.upper()}</h2>
-        <iframe src="https://docs.google.com/gview?url={file_url}&embedded=true"
-                width="100%" height="600px"></iframe>
+    top_bar = f"""
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h2 style="color:white; font-size:24px; font-weight:bold;">{unit} - {rtype.upper()}</h2>
+        <button onclick="openFullscreen('resource-container')" 
+                style="background:#0284c7; color:white; border:none; padding:10px 16px; border-radius:12px; cursor:pointer; font-weight:600;">
+            Fullscreen
+        </button>
     </div>
     """
 
+    # Determine URL
+    if file_path.startswith("http"):
+        iframe_src = file_path
+    elif file_path.lower().endswith(".pdf"):
+        iframe_src = f"/uploads/{file_path}"
+    else:
+        base_url = request.host_url
+        file_url = f"{base_url}uploads/{file_path}"
+        iframe_src = f"https://docs.google.com/gview?url={file_url}&embedded=true"
+
+    return f"""
+    {fullscreen_style}
+    <div class='card' style='padding:20px;'>
+        {top_bar}
+        <div id="resource-container" style="background:white; border-radius:16px; overflow:hidden;">
+            <iframe src="{iframe_src}" width="100%" height="700px" style="border:none;"></iframe>
+        </div>
+    </div>
+    """
 
 @app.route("/uploads/<path:filename>")
 def uploaded_file(filename):
@@ -319,49 +383,80 @@ def uploaded_file(filename):
 
 @app.route("/admin/upload-resource", methods=["GET", "POST"])
 def upload_resource():
+
     if "admin_logged_in" not in session:
         return redirect("/admin")
+
     if request.method == "POST":
+
         semester = request.form["semester"]
         subject = request.form["subject"]
         unit = request.form["unit"]
         rtype = request.form["type"]
 
-        file = request.files["file"]
+        # Google Drive link
+        resource_link = request.form["resource_link"].strip()
 
-        if file and file.filename != "":
-            filename = str(uuid.uuid4()) + "_" + file.filename
-            file.save(os.path.join(UPLOAD_FOLDER, filename))
+        # auto convert /view → /preview
+        resource_link = resource_link.replace(
+            "/view?usp=sharing",
+            "/preview"
+        )
 
-            conn = sqlite3.connect("notes.db")
-            cursor = conn.cursor()
+        resource_link = resource_link.replace(
+            "/view",
+            "/preview"
+        )
 
-            cursor.execute("""
-                INSERT INTO resources (semester, subject, unit, type, file_path)
-                VALUES (?, ?, ?, ?, ?)
-            """, (semester, subject, unit, rtype, filename))
+        conn = sqlite3.connect("notes.db")
+        cursor = conn.cursor()
 
-            conn.commit()
-            conn.close()
+        cursor.execute("""
+            INSERT INTO resources (
+                semester,
+                subject,
+                unit,
+                type,
+                file_path
+            )
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            semester,
+            subject,
+            unit,
+            rtype,
+            resource_link
+        ))
+
+        conn.commit()
+        conn.close()
 
         return redirect("/admin/dashboard")
 
+    # GET REQUEST
     conn = sqlite3.connect("notes.db")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT DISTINCT semester, subject FROM notes")
+    cursor.execute("""
+        SELECT DISTINCT semester, subject
+        FROM notes
+    """)
     subjects = cursor.fetchall()
 
-    cursor.execute("SELECT DISTINCT semester, subject, unit FROM notes")
+    cursor.execute("""
+        SELECT DISTINCT semester, subject, unit
+        FROM notes
+    """)
     units = cursor.fetchall()
 
     conn.close()
 
-    return render_template("upload_resource.html",
-                           semesters=semesters,
-                           subjects=subjects,
-                           units=units)
-
+    return render_template(
+        "upload_resource.html",
+        semesters=semesters,
+        subjects=subjects,
+        units=units
+    )
 
 @app.route("/admin/topics")
 def admin_topics():
@@ -459,6 +554,21 @@ def edit_topic(topic_id):
                 INSERT INTO topic_sections (topic_id, section_title, section_content, image_path, section_order)
                 VALUES (?, ?, ?, ?, ?)
             """, (topic_id, section_titles[i], section_contents[i], sec_img_path, i))
+        
+        # Update Problems
+        problems = request.form.getlist("problem[]")
+        solutions = request.form.getlist("solution[]")
+
+        # Clear existing problems for this topic
+        cursor.execute("DELETE FROM problem_bank WHERE topic_id=?", (topic_id,))
+
+        # Re-insert updated problems
+        for i in range(len(problems)):
+            if problems[i].strip():
+                cursor.execute("""
+                    INSERT INTO problem_bank (topic_id, problem, solution, problem_order)
+                    VALUES (?, ?, ?, ?)
+                """, (topic_id, problems[i], solutions[i], i))
 
         conn.commit()
         conn.close()
@@ -625,6 +735,114 @@ def admin_resources():
     conn.close()
 
     return render_template("admin_resources.html", resources=resources)
+
+
+@app.route("/search_suggestions")
+def search_suggestions():
+    query = request.args.get("q", "").lower()
+    if not query:
+        return {"results": []}
+
+    conn = sqlite3.connect("notes.db")
+    cursor = conn.cursor()
+
+    # Deep Scan Query: 
+    # It finds the topic even if the query matches a sub-section title or content
+    cursor.execute("""
+        SELECT DISTINCT 
+            n.semester, 
+            n.subject, 
+            n.unit, 
+            n.topic
+        FROM notes n
+        LEFT JOIN topic_sections ts ON n.id = ts.topic_id
+        WHERE LOWER(n.topic) LIKE ? 
+           OR LOWER(ts.section_title) LIKE ? 
+           OR LOWER(ts.section_content) LIKE ?
+        LIMIT 6
+    """, (f"%{query}%", f"%{query}%", f"%{query}%"))
+
+    results = cursor.fetchall()
+    conn.close()
+
+    suggestions = []
+    for sem, sub, unit, topic in results:
+        suggestions.append({
+            "semester": sem,
+            "subject": sub,
+            "unit": unit,
+            "topic": topic
+        })
+
+    return {"results": suggestions}
+
+
+
+@app.route("/admin/download-db")
+def download_db():
+
+    if "admin_logged_in" not in session:
+        return redirect("/admin")
+
+    return send_file(
+        "notes.db",
+        as_attachment=True
+    )
+
+@app.route("/submit-feedback", methods=["POST"])
+def submit_feedback():
+
+    name = request.form.get("name")
+    subject = request.form.get("subject")
+    issue_type = request.form.get("issue_type")
+    message = request.form.get("message")
+
+    conn = sqlite3.connect("notes.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO feedback (
+            name,
+            subject,
+            issue_type,
+            message
+        )
+        VALUES (?, ?, ?, ?)
+    """, (
+        name,
+        subject,
+        issue_type,
+        message
+    ))
+
+    conn.commit()
+    conn.close()
+
+    return redirect(request.referrer)
+@app.route("/admin/feedback")
+def admin_feedback():
+
+    if "admin_logged_in" not in session:
+        return redirect("/admin")
+
+    conn = sqlite3.connect("notes.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, name, subject, issue_type, message, created_at
+        FROM feedback
+        ORDER BY created_at DESC
+    """)
+
+    feedbacks = cursor.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "admin_feedback.html",
+        feedbacks=feedbacks
+    )
+
 
 if __name__ == "__main__":
     app.run()
