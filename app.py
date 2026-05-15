@@ -4,8 +4,9 @@ import sqlite3
 from datetime import datetime
 from datetime import timedelta
 import uuid
+import dotenv
 from flask import send_file
-
+dotenv.load_dotenv()
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
@@ -14,7 +15,9 @@ IMAGE_FOLDER = os.path.join("static", "images")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(IMAGE_FOLDER, exist_ok=True)
 
-
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+app.secret_key = os.getenv("SECRET_KEY")
 
 semesters = [f"Semester {i}" for i in range(1, 9)]
 
@@ -323,7 +326,7 @@ def load_resource(semester, subject, unit, rtype):
     conn.close()
 
     if not result:
-        return "<div style='padding:40px; color:white;'><h2>No resource found</h2></div>"
+        return "<div style='padding:40px; color:white;'><h2>will be  uploaded soon!!</h2></div>"
 
     file_path = result[0]
     
@@ -345,9 +348,20 @@ def load_resource(semester, subject, unit, rtype):
     </style>
     """
 
+    # 1. Determine the header text using Python conditions
+    if subject == "Design and Analysis" and unit == "Unit 4" and rtype == "qb":
+        header_title = "Unit 3 and 4- QB"
+    elif subject == "Cyber Security" and unit == "Unit 1" and rtype == "ppt":
+        header_title = "Unit 1 and 2- Slides"
+    elif subject == "Cyber Security" and unit == "Unit 3" and rtype == "ppt":
+        header_title = "Unit 3 and 4- Slides"
+    else:
+        header_title = f"{unit} - {rtype.upper()}"
+
+    # 2. Drop the title cleanly inside the Python f-string
     top_bar = f"""
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <h2 style="color:white; font-size:24px; font-weight:bold;">{unit} - {rtype.upper()}</h2>
+        <h2 style="color:white; font-size:24px; font-weight:bold;">{header_title}</h2>
         <button onclick="openFullscreen('resource-container')" 
                 style="background:#0284c7; color:white; border:none; padding:10px 16px; border-radius:12px; cursor:pointer; font-weight:600;">
             Fullscreen

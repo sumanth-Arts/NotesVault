@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="scroll-smooth">
 <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EPB570WMLL"></script>
@@ -43,9 +43,9 @@
 
 <body class="h-screen flex flex-col">
 
+    <!-- Top Navigation Bar -->
     <nav class="h-16 border-b border-slate-800 bg-slate-900/80 backdrop-blur-md flex items-center justify-between px-6 shrink-0 z-50">
         <div class="flex items-center gap-4">
-            <!-- Toggle button is now always visible (removed md:hidden) -->
             <button onclick="toggleSidebar()" class="p-2 rounded-lg hover:bg-slate-800 text-slate-400 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
@@ -59,13 +59,13 @@
         </div>
     </nav>
 
-    <!-- Overlay is now visible on all screens when sidebar is open (removed md:hidden) -->
+    <!-- Sidebar Overlay -->
     <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-40 hidden transition-opacity duration-300"></div>
 
     <div class="flex flex-1 overflow-hidden relative">
-        <!-- Sidebar: Removed md:relative and md:translate-x-0 to make it dynamic everywhere -->
+        <!-- App Sidebar Container -->
         <aside id="mobileSidebar" class="fixed top-0 left-0 h-full w-72 z-50 bg-slate-900 border-r border-slate-800 transform -translate-x-full flex flex-col sidebar-scroll overflow-y-auto">
-            <div class="p-4 border-b border-slate-800/50 flex justify-between items-center">
+            <div class="p-4 border-b border-slate-800/50 flex justify-between items-center shrink-0">
                 <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Course Curriculum</span>
                 <button onclick="toggleSidebar()" class="p-1 hover:text-white text-slate-500">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
@@ -73,10 +73,85 @@
             </div>
 
             <div class="flex-1 py-4 space-y-2">
+                {% if subject_name == "Cyber Security" %}
+                
+                <!-- ====== CYBER SECURITY CUSTOM CURRICULUM ====== -->
+                <div class="px-3">
+                    <!-- Unit 1 + Unit 2 Group Heading -->
+                    <div class="group flex items-center justify-between p-3 rounded-xl hover:bg-slate-800/50 cursor-pointer transition-all mb-1"
+                         onclick="handleCombinedUnit('Unit 1', 'Unit 2', this)">
+                        <span class="text-sm font-semibold text-slate-300 group-hover:text-white">Unit 1 + Unit 2</span>
+                        <svg class="w-4 h-4 text-slate-600 group-hover:text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+
+                    <!-- Unit 1 + Unit 2 Sub-links -->
+                    <div class="ml-4 space-y-1 border-l border-slate-800 pl-4 mb-4">
+                        <button data-sidebar-link onclick="handleCombinedUnit('Unit 1', 'Unit 2', this)" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> Notes
+                        </button>
+                        <button data-sidebar-link onclick="loadResource('Unit 1', 'ppt', this)" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> Slides
+                        </button>
+                        <button data-sidebar-link onclick="loadResource('Unit 1', 'qb', this)" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> QB
+                        </button>
+                    </div>
+                </div>
+
+                <div class="px-3">
+                    <!-- Unit 3 + Unit 4 Group Heading -->
+                    <div class="group flex items-center justify-between p-3 rounded-xl hover:bg-slate-800/50 cursor-pointer transition-all mb-1"
+                         onclick="handleCombinedUnit('Unit 3', 'Unit 4', this)">
+                        <span class="text-sm font-semibold text-slate-300 group-hover:text-white">Unit 3 + Unit 4</span>
+                        <svg class="w-4 h-4 text-slate-600 group-hover:text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+
+                    <!-- Unit 3 + Unit 4 Sub-links -->
+                    <div class="ml-4 space-y-1 border-l border-slate-800 pl-4 mb-4">
+                        <button data-sidebar-link onclick="handleCombinedUnit('Unit 3', 'Unit 4', this)" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> Notes
+                        </button>
+                        <button data-sidebar-link onclick="loadResource('Unit 3', 'ppt', this)" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> Slides
+                        </button>
+                        <button data-sidebar-link onclick="loadResource('Unit 3', 'qb', this)" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> QB
+                        </button>
+                    </div>
+                </div>
+
+                <div class="px-3">
+                    <div class="group flex items-center justify-between p-3 rounded-xl hover:bg-slate-800/50 cursor-pointer transition-all mb-1"
+                         onclick="handleNavClick('Unit 5', 'notes', this)">
+                        <span class="text-sm font-semibold text-slate-300 group-hover:text-white">Unit 5</span>
+                        <svg class="w-4 h-4 text-slate-600 group-hover:text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+
+                    <div class="ml-4 space-y-1 border-l border-slate-800 pl-4 mb-4">
+                        <button data-sidebar-link onclick="handleNavClick('Unit 5', 'notes', this)" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> Notes
+                        </button>
+                        <button data-sidebar-link onclick="loadResource('Unit 5', 'ppt', this)" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> Slides
+                        </button>
+                        <button data-sidebar-link onclick="loadResource('Unit 5', 'qb', this)" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> QB
+                        </button>
+                    </div>
+                </div>
+                {% else %}
+
+                <!-- ====== STANDARD CURRICULUM FOR OTHER SUBJECTS ====== -->
                 {% for unit in units %}
                 <div class="px-3">
                     <div class="group flex items-center justify-between p-3 rounded-xl hover:bg-slate-800/50 cursor-pointer transition-all mb-1"
-                         onclick="handleNavClick('{{ unit }}', 'notes')">
+                         onclick="handleNavClick('{{ unit }}', 'notes', this)">
                         <span class="text-sm font-semibold text-slate-300 group-hover:text-white">{{ unit }}</span>
                         <svg class="w-4 h-4 text-slate-600 group-hover:text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -84,25 +159,33 @@
                     </div>
 
                     <div class="ml-4 space-y-1 border-l border-slate-800 pl-4 mb-4">
-                        <button onclick="handleNavClick('{{ unit }}', 'notes')" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
+                        <button data-sidebar-link onclick="handleNavClick('{{ unit }}', 'notes', this)" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
                             <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> Notes
                         </button>
-                        <button onclick="handleNavClick('{{ unit }}', 'ppt')" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
+                        {% if subject_name != "Engineering Mathematics" and subject_name != "Design and Analysis" and subject_name != "Java" %}
+                        <button data-sidebar-link onclick="handleNavClick('{{ unit }}', 'ppt', this)" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
                             <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> Slides
                         </button>
-                        <button onclick="handleNavClick('{{ unit }}', 'handwritten')" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
+                        {% endif %}
+                        {% if subject_name != "Java" and subject_name != "Computer Networks" and subject_name != "IoT" %}
+                        <button data-sidebar-link onclick="handleNavClick('{{ unit }}', 'handwritten', this)" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
                             <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> Handwritten Notes
                         </button>
-                        <button onclick="handleNavClick('{{ unit }}', 'qb')" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
+                        {% endif %}
+                        {% if subject_name != "Java" %}
+                        <button data-sidebar-link onclick="handleNavClick('{{ unit }}', 'qb', this)" class="w-full text-left py-1.5 text-xs text-slate-500 hover:text-sky-400 transition flex items-center gap-2">
                             <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span> QB
                         </button>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
+                
+                {% endif %}
             </div>
         </aside>
 
-        <!-- Main Content Area -->
+        <!-- Main Dynamic Content Container -->
         <main class="flex-1 overflow-y-auto content-area p-6 md:p-12 w-full">
             <div id="notes-content" class="max-w-4xl mx-auto">
                 <div class="h-[60vh] flex flex-col items-center justify-center text-center">
@@ -114,6 +197,7 @@
         </main>
     </div>
 
+    <!-- Interface Event Handlers -->
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById("mobileSidebar");
@@ -122,11 +206,39 @@
             overlay.classList.toggle("hidden");
         }
 
-        function handleNavClick(unit, type) {
-            // Close sidebar on any screen size after a selection
-            toggleSidebar();
-            if (type === 'notes') loadUnit(unit);
-            else loadResource(unit, type);
+        // Shared function to reset all links and light up the active item
+        function highlightActiveLink(element) {
+            if (!element) return;
+            
+            // Query all clickable text modules containing our attribute template tag
+            document.querySelectorAll("[data-sidebar-link]").forEach(btn => {
+                btn.classList.remove(
+                    "text-sky-400",
+                    "font-bold",
+                    "drop-shadow-[0_0_8px_rgba(56,189,248,0.9)]"
+                );
+                btn.classList.add("text-slate-500");
+            });
+
+            // Activate current element target values
+            if(element.hasAttribute('data-sidebar-link')) {
+                element.classList.remove("text-slate-500");
+                element.classList.add(
+                    "text-sky-400",
+                    "font-bold",
+                    "drop-shadow-[0_0_8px_rgba(56,189,248,0.9)]"
+                );
+            }
+        }
+
+        function handleNavClick(unit, type, element) {
+            highlightActiveLink(element);
+
+            if (type === "notes") {
+                loadUnit(unit);
+            } else {
+                loadResource(unit, type, element);
+            }
         }
 
         function loadUnit(unitName) {
@@ -138,7 +250,7 @@
                 .then(data => {
                     content.innerHTML = data;
 
-                    // Render KaTeX
+                    // Render KaTeX Formulas
                     renderMathInElement(content, {
                         delimiters: [
                             { left: "$$", right: "$$", display: true },
@@ -148,12 +260,11 @@
                         throwOnError: false
                     });
 
-                    // FIXED AUTO-SCROLL LOGIC
+                    // Search Deep Redirection Handler (Auto Scroll & Expansion)
                     const params = new URLSearchParams(window.location.search);
                     const topicTarget = params.get("topic");
 
                     if (topicTarget) {
-                        // Small timeout to allow DOM/KaTeX to finish layout shifts
                         setTimeout(() => {
                             const elements = document.querySelectorAll("[data-topic]");
                             const decodedTopic = topicTarget.trim().toLowerCase();
@@ -161,7 +272,7 @@
                             for (let el of elements) {
                                 if (el.getAttribute("data-topic")?.trim().toLowerCase() === decodedTopic) {
                                     
-                                    // 1. Manually trigger the expansion of the topic
+                                    // // Manually expand found hidden topic content modules immediately
                                     // const hiddenContent = el.querySelector(".hidden-content");
                                     // const icon = el.querySelector(".toggle-icon");
                                     
@@ -172,13 +283,13 @@
                                     //     el.classList.add("ring-1", "ring-sky-500/30", "bg-slate-800/50");
                                     // }
 
-                                    // 2. Scroll to the element
+                                    // Run smooth scroll targeting container element area midpoint
                                     el.scrollIntoView({
                                         behavior: "smooth",
                                         block: "center"
                                     });
 
-                                    // 3. Highlight feedback
+                                    // Visual focus identifier highlight trigger
                                     el.classList.add("ring-2", "ring-sky-500");
                                     setTimeout(() => el.classList.remove("ring-2", "ring-sky-500"), 3000);
                                     break;
@@ -189,15 +300,20 @@
                 });
         }
 
-        function loadResource(unitName, type) {
+        function loadResource(unitName, type, element) {
+            highlightActiveLink(element);
+            
+            // Close sidebar for mobile safety before loading iFrame systems
+            if (window.innerWidth < 768) toggleSidebar();
+            
             const content = document.getElementById("notes-content");
             content.innerHTML = `<div class="flex justify-center py-20"><div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-500"></div></div>`;
-            fetch(`/resource/{{ semester_name }}/{{ subject_name }}/${unitName}/${type}`)
+            fetch(`/resource/{{ semester_name }}/{{ subject_name }}/${encodeURIComponent(unitName)}/${type}`)
                 .then(r => r.text())
                 .then(data => { content.innerHTML = data; });
         }
 
-        // Global Topic Toggle Listener
+        // Global Topic Accordion Dropdown Listener
         document.addEventListener("click", function (e) {
             const header = e.target.closest("[onclick^='toggleTopic']");
             if (!header) return;
@@ -221,54 +337,83 @@
             }
         });
 
-window.onload = () => {
-    const params = new URLSearchParams(window.location.search);
-    
-    // 1. Try to get unit from URL (this will now be present from search)
-    let unit = params.get("unit");
+        // Combined Units Execution Handler (For Cyber Security Merge Views)
+        function handleCombinedUnit(unit1, unit2, element) {
+            highlightActiveLink(element);
+            if (window.innerWidth < 768) toggleSidebar();
+            
+            const content = document.getElementById("notes-content");
+            content.innerHTML = `<div class="flex justify-center py-20"><div class="animate-spin rounded-full h-10 w-10 border-b-2 border-sky-500"></div></div>`;
 
-    // 2. Fallback: If no unit in URL, use the first unit of the subject
-    if (!unit) {
-        unit = "{{ units[0] if units else '' }}";
-    }
+            Promise.all([
+                fetch(`/unit_content/{{ semester_name }}/{{ subject_name }}/${encodeURIComponent(unit1)}`).then(res => res.text()),
+                fetch(`/unit_content/{{ semester_name }}/{{ subject_name }}/${encodeURIComponent(unit2)}`).then(res => res.text())
+            ])
+            .then(([data1, data2]) => {
+                content.innerHTML = data1 + data2;
 
-    // 3. Load the correct unit
-    if (unit) {
-        loadUnit(unit);
-    }
-};
+                renderMathInElement(content, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false },
+                        { left: "\\(", right: "\\)", display: false }
+                    ],
+                    throwOnError: false
+                });
+            })
+            .catch(err => {
+                console.error("Error fetching combined units:", err);
+                content.innerHTML = `<div class="text-center py-10 text-rose-400">Failed to load combined curriculum resources.</div>`;
+            });
+        }
+
+        // Document Initialization Route Fallback Trigger
+        window.onload = () => {
+            const params = new URLSearchParams(window.location.search);
+            let unit = params.get("unit");
+
+            if (!unit) {
+                // If it is Cyber Security, default load Unit 1 which auto-runs logic pipeline structures safely
+                if ("{{ subject_name }}" === "Cyber Security") {
+                    const defaultLink = document.querySelector("button[onclick*='handleCombinedUnit(\\'Unit 1\\']");
+                    handleCombinedUnit('Unit 1', 'Unit 2', defaultLink);
+                    return;
+                }
+                unit = "{{ units[0] if units else '' }}";
+            }
+
+            if (unit) {
+                if (unit === 'Unit 1' && "{{ subject_name }}" === "Cyber Security") {
+                    const activeLink = document.querySelector("button[onclick*='handleCombinedUnit(\\'Unit 1\\']");
+                    handleCombinedUnit('Unit 1', 'Unit 2', activeLink);
+                } else if (unit === 'Unit 3' && "{{ subject_name }}" === "Cyber Security") {
+                    const activeLink = document.querySelector("button[onclick*='handleCombinedUnit(\\'Unit 3\\']");
+                    handleCombinedUnit('Unit 3', 'Unit 4', activeLink);
+                } else {
+                    // Match standard structural unit buttons to fire their highlighting pipelines
+                    const targetBtn = document.querySelector(`button[onclick*="handleNavClick('${unit}', 'notes'"]`);
+                    if(targetBtn) {
+                        handleNavClick(unit, 'notes', targetBtn);
+                    } else {
+                        loadUnit(unit);
+                    }
+                }
+            }
+        };
+
+        // Fullscreen API Element Trigger Hook
+        function openFullscreen(id) {
+            const element = document.getElementById(id);
+            if (!element) return;
+
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) { /* Safari */
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) { /* IE11 */
+                element.msRequestFullscreen();
+            }
+        }
     </script>
-
-<script>
-function openFullscreen(id) {
-
-    const element = document.getElementById(id);
-
-    if (!element) return;
-
-    if (element.requestFullscreen) {
-        element.requestFullscreen();
-    }
-    else if (element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen();
-    }
-    else if (element.msRequestFullscreen) {
-        element.msRequestFullscreen();
-    }
-}
-// Add this to your existing <script> in subject.html
-function openFullscreen(id) {
-    const element = document.getElementById(id);
-    if (!element) return;
-
-    if (element.requestFullscreen) {
-        element.requestFullscreen();
-    } else if (element.webkitRequestFullscreen) { /* Safari */
-        element.webkitRequestFullscreen();
-    } else if (element.msRequestFullscreen) { /* IE11 */
-        element.msRequestFullscreen();
-    }
-}
-</script>
 </body>
 </html>
