@@ -7,6 +7,7 @@ import uuid
 from flask import send_file
 
 
+
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 IMAGE_FOLDER = os.path.join("static", "images")

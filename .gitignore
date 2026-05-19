@@ -43,6 +43,7 @@ update_sections.py
 update_topics.py
 view_sections.py
 view_topic_ids.py
+ai_assistant.py
 
 # Previously added scripts
 problem_bank.py
