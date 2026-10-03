@@ -864,8 +864,52 @@ def admin_feedback():
         feedbacks=feedbacks
     )
 
+# from flask import request, jsonify
+# from rag.chat import chat
+
+
+# @app.route("/chat", methods=["POST"])
+# def ai_chat():
+
+#     try:
+
+#         data = request.get_json()
+
+#         print("\nREQUEST DATA:")
+#         print(data)
+
+#         user_message = data.get("message")
+
+#         print("\nUSER MESSAGE:")
+#         print(user_message)
+
+#         answer = chat(user_message)
+
+#         print("\nAI ANSWER:")
+#         print(answer)
+
+#         return jsonify({
+#             "answer": answer
+#         })
+
+#     except Exception as e:
+
+#         print("\nCHAT ERROR:")
+#         print(str(e))
+
+#         return jsonify({
+#             "answer": f"Server Error: {str(e)}"
+#         })
+
 from flask import request, jsonify
-from rag.chat import chat
+import requests
+import os
+
+
+AI_SERVER_URL = os.getenv(
+    "AI_SERVER_URL",
+    "http://127.0.0.1:8000"
+)
 
 
 @app.route("/chat", methods=["POST"])
@@ -883,7 +927,18 @@ def ai_chat():
         print("\nUSER MESSAGE:")
         print(user_message)
 
-        answer = chat(user_message)
+        response = requests.post(
+            f"{AI_SERVER_URL}/chat",
+            json={"message": user_message},
+            timeout=180
+        )
+
+        response.raise_for_status()
+
+        answer = response.json().get(
+            "answer",
+            "No response from AI server"
+        )
 
         print("\nAI ANSWER:")
         print(answer)

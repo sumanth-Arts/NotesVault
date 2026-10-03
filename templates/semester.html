@@ -15,6 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ semester_name }} | semesters</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <style>
@@ -36,8 +37,314 @@
             box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.2);
         }
     </style>
+    <style id="mode-3d-theme">
+        /* =========================================================
+           3D MODE - shared by home, semester, subject and notes.
+           Toggle state is stored in localStorage ("notesvault_3d_mode")
+           so every page opens in the mode the visitor last chose.
+           Design follows base.html: Space Grotesk, #050505 void,
+           #f3f3f8 text, #888896 muted, #38bdf8 accent, uppercase
+           wide-tracked UI labels.
+           ========================================================= */
+
+        /* Canvas for the animated background (hidden until 3D is on) */
+        #vanta-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -20; /* Behind everything, including decorative glow blobs */
+            display: none;
+        }
+        body.mode-3d #vanta-bg { display: block; }
+
+        /* Toggle button */
+        #toggle-3d {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            height: 48px;
+            padding: 0 20px;
+            border-radius: 9999px;
+            background: rgba(14, 165, 233, 0.2);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            color: #f8fafc;
+            border: 1px solid rgba(14, 165, 233, 0.4);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #toggle-3d:hover {
+            background: rgba(14, 165, 233, 0.4);
+            border-color: rgba(14, 165, 233, 0.7);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.4);
+        }
+        #toggle-3d:active { transform: translateY(0) scale(0.95); }
+        #toggle-3d .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #64748b;
+            transition: all 0.3s ease;
+        }
+        #toggle-3d[aria-pressed="true"] .dot {
+            background: #38bdf8;
+            box-shadow: 0 0 10px #38bdf8;
+        }
+        /* Subject page: keep the toggle from covering the open sidebar */
+        body:has(#mobileSidebar:not(.-translate-x-full)) #toggle-3d { display: none; }
+
+        body { transition: background-color 0.4s ease, color 0.4s ease; }
+
+        body.mode-3d {
+            font-family: 'Space Grotesk', system-ui, sans-serif;
+            background-color: #050505;
+            color: #f3f3f8;
+        }
+        body.mode-3d button, body.mode-3d input, body.mode-3d select, body.mode-3d textarea {
+            font-family: inherit;
+        }
+        body.mode-3d .font-mono { font-family: inherit; }
+        body.mode-3d ::selection { background: #f3f3f8; color: #050505; }
+
+        /* ---- Text colors ---- */
+        body.mode-3d .text-white,
+        body.mode-3d .text-slate-200 { color: #f3f3f8; }
+        body.mode-3d .text-slate-300 { color: #d4d4de; }
+        body.mode-3d .text-slate-400,
+        body.mode-3d .text-slate-500 { color: #888896; }
+        body.mode-3d .text-slate-600 { color: #6e6e7a; }
+        body.mode-3d .text-slate-800 { color: rgba(243, 243, 248, 0.2); }
+        body.mode-3d .text-sky-300 { color: #7dd3fc; }
+        body.mode-3d .text-sky-400,
+        body.mode-3d .text-sky-500,
+        body.mode-3d .text-indigo-400,
+        body.mode-3d .text-indigo-500,
+        body.mode-3d .text-emerald-400,
+        body.mode-3d .text-emerald-500,
+        body.mode-3d .text-rose-500 { color: #38bdf8; }
+        body.mode-3d .hover\:text-sky-400:hover,
+        body.mode-3d .hover\:text-sky-500:hover,
+        body.mode-3d .hover\:text-white:hover { color: #f3f3f8; }
+        body.mode-3d .group:hover .group-hover\:text-sky-400 { color: #38bdf8; }
+        body.mode-3d .group:hover .group-hover\:text-sky-300 { color: #7dd3fc; }
+        body.mode-3d .group:hover .group-hover\:text-white,
+        body.mode-3d .group:hover .group-hover\:text-slate-300 { color: #f3f3f8; }
+
+        /* ---- Surfaces: dark glass so text stays readable over the 3D network ---- */
+        body.mode-3d .bg-slate-800\/20,
+        body.mode-3d .bg-slate-800\/30,
+        body.mode-3d .bg-slate-800\/40,
+        body.mode-3d .bg-slate-800\/50,
+        body.mode-3d .bg-slate-900\/20,
+        body.mode-3d .bg-slate-900\/50,
+        body.mode-3d .bg-slate-900\/80,
+        body.mode-3d .bg-gradient-to-br.from-slate-800\/40 {
+            background-color: rgba(5, 5, 5, 0.55);
+            background-image: none;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+        body.mode-3d .bg-slate-900 { background-color: #0a0a0d; }
+        body.mode-3d .bg-slate-800 {
+            background-color: rgba(20, 20, 26, 0.75);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+        }
+        body.mode-3d .bg-slate-700 { background-color: rgba(243, 243, 248, 0.2); }
+        body.mode-3d .bg-slate-700\/50 { background-color: rgba(243, 243, 248, 0.08); }
+        body.mode-3d .hover\:bg-slate-700:hover { background-color: rgba(243, 243, 248, 0.14); }
+        body.mode-3d .hover\:bg-slate-800\/50:hover { background-color: rgba(243, 243, 248, 0.06); }
+        body.mode-3d .bg-white\/5 { background-color: rgba(243, 243, 248, 0.05); }
+        body.mode-3d .bg-sky-500\/10,
+        body.mode-3d .bg-indigo-500\/10,
+        body.mode-3d .bg-emerald-500\/10,
+        body.mode-3d .bg-rose-500\/10 { background-color: rgba(56, 189, 248, 0.1); }
+        body.mode-3d .bg-indigo-500\/5,
+        body.mode-3d .bg-emerald-500\/5 { background-color: rgba(56, 189, 248, 0.05); }
+        body.mode-3d .bg-sky-500 { background-color: #38bdf8; }
+        body.mode-3d .to-indigo-500 { --tw-gradient-to: #7dd3fc; }
+
+        /* ---- Borders ---- */
+        body.mode-3d .border-slate-700,
+        body.mode-3d .border-slate-700\/50,
+        body.mode-3d .border-slate-700\/30,
+        body.mode-3d .border-slate-800,
+        body.mode-3d .border-slate-800\/50 { border-color: rgba(243, 243, 248, 0.12); }
+        body.mode-3d .border-sky-500\/20,
+        body.mode-3d .border-indigo-500\/20,
+        body.mode-3d .border-emerald-500\/20 { border-color: rgba(56, 189, 248, 0.25); }
+        body.mode-3d .hover\:border-sky-500\/50:hover,
+        body.mode-3d .hover\:border-indigo-500\/50:hover,
+        body.mode-3d .hover\:border-sky-500:hover { border-color: #38bdf8; }
+
+        /* ---- Nav bars: light glass, uppercase wide-tracked labels (base.html header) ---- */
+        body.mode-3d nav[class] {
+            background: rgba(5, 5, 5, 0.35);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(243, 243, 248, 0.08);
+        }
+        body.mode-3d nav h2 {
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 700;
+        }
+        body.mode-3d nav a[href="/"] span {
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 300;
+            font-size: 12px;
+        }
+        body.mode-3d .glass-nav .space-x-5 {
+            color: #f3f3f8;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 11px;
+            font-weight: 300;
+        }
+        body.mode-3d .glass-nav a[href="/admin"] {
+            background: transparent;
+            border: 1px solid rgba(243, 243, 248, 0.3);
+            border-radius: 9999px;
+            color: #f3f3f8;
+            font-weight: 400;
+        }
+        body.mode-3d .glass-nav a[href="/admin"]:hover {
+            border-color: #38bdf8;
+            color: #38bdf8;
+        }
+        body.mode-3d #mobile-menu a {
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 400;
+            font-size: 13px;
+        }
+        body.mode-3d #searchInput {
+            background: rgba(243, 243, 248, 0.04);
+            border-color: rgba(243, 243, 248, 0.15);
+            border-radius: 9999px;
+        }
+        body.mode-3d #searchInput::placeholder { color: #888896; }
+        body.mode-3d #searchInput:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+        body.mode-3d #suggestions {
+            background: rgba(5, 5, 5, 0.92);
+            border-color: rgba(243, 243, 248, 0.12);
+        }
+
+        /* ---- Buttons: outlined, uppercase, wide-tracked, accent fill on hover ---- */
+        body.mode-3d .bg-sky-600 {
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.6);
+            border-radius: 9999px;
+            color: #f3f3f8;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: none;
+        }
+        body.mode-3d .bg-sky-600:hover {
+            background: #38bdf8;
+            border-color: #38bdf8;
+            color: #050505;
+        }
+        body.mode-3d button.bg-white\/5 {
+            border: 1px solid rgba(243, 243, 248, 0.2);
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        body.mode-3d button.bg-slate-800 {
+            border: 1px solid rgba(243, 243, 248, 0.2);
+            border-radius: 9999px;
+        }
+        body.mode-3d button.bg-slate-800:hover {
+            border-color: #38bdf8;
+            color: #38bdf8;
+        }
+        /* Accent fill when a parent card/group is hovered (kept after the text rules above) */
+        body.mode-3d .group:hover .group-hover\:bg-sky-600,
+        body.mode-3d .group:hover .group-hover\:bg-sky-500 {
+            background: #38bdf8;
+            border-color: #38bdf8;
+            color: #050505;
+        }
+
+        /* ---- Page-specific pieces ---- */
+        /* semester.html subject cards */
+        body.mode-3d .glass-card {
+            background: rgba(5, 5, 5, 0.55);
+            border-color: rgba(243, 243, 248, 0.12);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+        body.mode-3d .glass-card:hover {
+            background: rgba(5, 5, 5, 0.7);
+            border-color: #38bdf8;
+            box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.3);
+        }
+        /* subject.html: drop the dotted grid so it does not fight the 3D network */
+        body.mode-3d .content-area { background-image: none; }
+
+        /* ---- Floating widgets (home chatbot + toggle) ---- */
+        body.mode-3d #toggle-3d {
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-size: 11px;
+        }
+        body.mode-3d #chatbot-container {
+            background: rgba(5, 5, 5, 0.72);
+            border-color: rgba(243, 243, 248, 0.12);
+        }
+        body.mode-3d #chat-header {
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        body.mode-3d #chat-messages { background: none; }
+        body.mode-3d #chat-input-area { background: rgba(5, 5, 5, 0.5); }
+        body.mode-3d #chat-input {
+            background: rgba(243, 243, 248, 0.04);
+            border-radius: 9999px;
+        }
+        body.mode-3d #send-btn {
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 12px;
+        }
+        body.mode-3d .user-message {
+            background: rgba(56, 189, 248, 0.18);
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+        body.mode-3d .ai-message { color: #f3f3f8; }
+        body.mode-3d .loading { color: #888896; }
+    </style>
 </head>
 <body class="min-h-screen">
+
+    <!-- 3D mode: apply the saved choice before first paint (avoids a flat-design flash) -->
+    <script>try { if (localStorage.getItem("notesvault_3d_mode") === "1") document.body.classList.add("mode-3d"); } catch (e) {}</script>
+
+    <!-- The WebGL Background Canvas -->
+    <div id="vanta-bg"></div>
 
     <nav class="w-full border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -235,5 +542,115 @@ window.addEventListener("load", () => {
     }, 10000); // 10 seconds
 });
 </script>
+
+    <button id="toggle-3d" aria-pressed="false" title="Switch between the standard and 3D design">
+        <span class="dot"></span><span id="toggle-3d-label">3D Mode: Off</span>
+    </button>
+
+    <!-- 3D Design Toggle (same on every page; choice is shared through localStorage) -->
+    <script>
+        (function () {
+            const btn = document.getElementById("toggle-3d");
+            const label = document.getElementById("toggle-3d-label");
+            const STORE_KEY = "notesvault_3d_mode";
+            let vantaEffect = null;
+            let libsPromise = null;
+
+            function loadScript(src) {
+                return new Promise((resolve, reject) => {
+                    const el = document.createElement("script");
+                    el.src = src;
+                    el.onload = resolve;
+                    el.onerror = () => reject(new Error("Failed to load " + src));
+                    document.head.appendChild(el);
+                });
+            }
+
+            // Three.js and Vanta are only downloaded the first time 3D mode is switched on
+            function loadLibs() {
+                if (!libsPromise) {
+                    libsPromise = loadScript("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js")
+                        .then(() => loadScript("https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"))
+                        .catch((err) => { libsPromise = null; throw err; });
+                }
+                return libsPromise;
+            }
+
+            function startVanta() {
+                if (vantaEffect) return;
+                vantaEffect = VANTA.NET({
+                    el: "#vanta-bg",
+                    mouseControls: true,
+                    touchControls: true,
+                    gyroControls: false,
+                    minHeight: 200.00,
+                    minWidth: 200.00,
+                    scale: 1.00,
+                    scaleMobile: 1.00,
+                    color: 0x38bdf8, /* Accent Color */
+                    backgroundColor: 0x050505, /* Deep Void */
+                    points: 12.00,
+                    maxDistance: 22.00,
+                    spacing: 18.00,
+                    showDots: true
+                });
+            }
+
+            function stopVanta() {
+                if (vantaEffect) {
+                    vantaEffect.destroy();
+                    vantaEffect = null;
+                }
+            }
+
+            function setUI(on) {
+                document.body.classList.toggle("mode-3d", on);
+                btn.setAttribute("aria-pressed", on ? "true" : "false");
+                label.textContent = on ? "3D Mode: On" : "3D Mode: Off";
+            }
+
+            async function set3D(on, persist = true) {
+                if (on) {
+                    setUI(true);
+                    label.textContent = "Loading 3D...";
+                    try {
+                        await loadLibs();
+                        if (document.body.classList.contains("mode-3d")) {
+                            startVanta();
+                            setUI(true);
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        setUI(false);
+                        label.textContent = "3D unavailable";
+                        setTimeout(() => setUI(false), 2000);
+                        return;
+                    }
+                } else {
+                    stopVanta();
+                    setUI(false);
+                }
+                if (persist) {
+                    try { localStorage.setItem(STORE_KEY, on ? "1" : "0"); } catch (e) {}
+                }
+            }
+
+            btn.addEventListener("click", () => {
+                set3D(!document.body.classList.contains("mode-3d"));
+            });
+
+            // Restore the visitor's last choice on every page
+            window.addEventListener("DOMContentLoaded", () => {
+                let saved = null;
+                try { saved = localStorage.getItem(STORE_KEY); } catch (e) {}
+                if (saved === "1") set3D(true, false);
+            });
+
+            // Keep other open tabs in sync
+            window.addEventListener("storage", (e) => {
+                if (e.key === STORE_KEY) set3D(e.newValue === "1", false);
+            });
+        })();
+    </script>
 </body>
 </html>
